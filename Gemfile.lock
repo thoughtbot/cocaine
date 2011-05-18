@@ -1,3 +1,8 @@
+PATH
+  remote: .
+  specs:
+    cocaine (0.0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -21,5 +26,6 @@ PLATFORMS
 
 DEPENDENCIES
   bourne
+  cocaine!
   mocha
   rspec
