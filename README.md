@@ -2,6 +2,12 @@
 
 A small library for doing (command) lines.
 
+## Feedback
+
+Question? Idea? Problem? Bug? Something else? Comment? Concern? Like use question marks?
+
+[GitHub Issues For All!](https://github.com/thoughtbot/cocaine/issues)
+
 ## Usage
 
 The basic, normal stuff.
