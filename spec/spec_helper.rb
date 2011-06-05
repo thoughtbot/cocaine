@@ -1,5 +1,5 @@
 require 'rspec'
-require 'spec/support/with_exitstatus'
+require './spec/support/with_exitstatus'
 require 'mocha'
 require 'bourne'
 require 'cocaine'

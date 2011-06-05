@@ -11,10 +11,20 @@ describe Cocaine::CommandLine do
     cmd.command.should == "convert a.jpg b.png"
   end
 
-  it "can set a default path and produce commands with that path" do
-    Cocaine::CommandLine.path = "/opt/bin"
-    cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
-    cmd.command.should == "/opt/bin/convert a.jpg b.png"
+  it "specifies the path where the command should be run" do
+    Cocaine::CommandLine.path = "/path/to/command/dir"
+    cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{PATH}]'")
+    cmd.command.should == "ruby -e 'puts ENV[%{PATH}]'"
+    output = cmd.run
+    output.should match(%r{/path/to/command/dir})
+  end
+
+  it "specifies more than one path where the command should be run" do
+    Cocaine::CommandLine.path = ["/path/to/command/dir", "/some/other/path"]
+    cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{PATH}]'")
+    output = cmd.run
+    output.should match(%r{/path/to/command/dir})
+    output.should match(%r{/some/other/path})
   end
 
   it "can interpolate quoted variables into the parameters" do

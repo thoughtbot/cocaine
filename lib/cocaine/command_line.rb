@@ -15,15 +15,18 @@ module Cocaine
 
     def command
       cmd = []
-      cmd << full_path(@binary)
+      cmd << @binary
       cmd << interpolate(@params, @options)
       cmd << bit_bucket if @swallow_stderr
-      cmd.join(" ")
+      cmd.join(" ").strip
     end
 
     def run
+      output = ''
       begin
-        output = self.class.send(:'`', command)
+        with_modified_path do
+          output = self.class.send(:'`', command)
+        end
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
       end
@@ -38,8 +41,15 @@ module Cocaine
 
     private
 
-    def full_path(binary)
-      [self.class.path, binary].compact.join("/")
+    def with_modified_path
+      begin
+        saved_path = ENV['PATH']
+        extra_path = [self.class.path].flatten
+        ENV['PATH'] = [ENV['PATH'], *extra_path].join(File::PATH_SEPARATOR)
+        yield
+      ensure
+        ENV['PATH'] = saved_path
+      end
     end
 
     def interpolate(pattern, vars)
