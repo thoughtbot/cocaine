@@ -89,7 +89,7 @@ module Cocaine
     end
 
     def self.unix?
-      File.exist?("/dev/null")
+      (Config::CONFIG['host_os'] =~ /mswin|mingw/).nil?
     end
   end
 end

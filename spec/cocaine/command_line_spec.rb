@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Cocaine::CommandLine do
   before do
     Cocaine::CommandLine.path = nil
-    File.stubs(:exist?).with("/dev/null").returns(true)
+    Config::CONFIG.stubs(:[]).with('host_os').returns('darwin')
   end
 
   it "takes a command and parameters and produce a shell command for bash" do
@@ -37,7 +37,7 @@ describe Cocaine::CommandLine do
   end
 
   it "quotes command line options differently if we're on windows" do
-    File.stubs(:exist?).with("/dev/null").returns(false)
+    Cocaine::CommandLine.stubs(:unix?).returns(false)
     cmd = Cocaine::CommandLine.new("convert",
                                      ":one :{two}",
                                      :one => "a.jpg",
@@ -56,7 +56,7 @@ describe Cocaine::CommandLine do
   end
 
   it "can quote and interpolate dangerous variables even on windows" do
-    File.stubs(:exist?).with("/dev/null").returns(false)
+    Cocaine::CommandLine.stubs(:unix?).returns(false)
     cmd = Cocaine::CommandLine.new("convert",
                                      ":one :two",
                                      :one => "`rm -rf`.jpg",
@@ -71,7 +71,7 @@ describe Cocaine::CommandLine do
   end
 
   it "adds redirection to get rid of stderr in bash" do
-    File.stubs(:exist?).with("/dev/null").returns(true)
+    Cocaine::CommandLine.stubs(:unix?).returns(true)
     cmd = Cocaine::CommandLine.new("convert",
                                      "a.jpg b.png",
                                      :swallow_stderr => true)
@@ -80,7 +80,7 @@ describe Cocaine::CommandLine do
   end
 
   it "adds redirection to get rid of stderr in cmd.exe" do
-    File.stubs(:exist?).with("/dev/null").returns(false)
+    Cocaine::CommandLine.stubs(:unix?).returns(false)
     cmd = Cocaine::CommandLine.new("convert",
                                      "a.jpg b.png",
                                      :swallow_stderr => true)
@@ -130,13 +130,13 @@ describe Cocaine::CommandLine do
     end
   end
 
-  it "detects that the system is unix or windows based on presence of /dev/null" do
-    File.stubs(:exist?).returns(true)
+  it "detects that the system is unix or windows based on RbConfig" do
+    Config::CONFIG.stubs(:[]).with('host_os').returns('darwin')
     Cocaine::CommandLine.unix?.should == true
   end
 
-  it "detects that the system is not unix or windows based on absence of /dev/null" do
-    File.stubs(:exist?).returns(false)
+  it "detects that the system is not unix or windows based on RbConfig" do
+    Config::CONFIG.stubs(:[]).with('host_os').returns('mswin')
     Cocaine::CommandLine.unix?.should_not == true
   end
 end
