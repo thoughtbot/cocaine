@@ -89,7 +89,7 @@ module Cocaine
     end
 
     def self.unix?
-      return (Config::CONFIG['host_os'] !=~ /mswin|mingw/).nil?
+      return (Config::CONFIG['host_os'] =~ /mswin|mingw/).nil?
     end
   end
 end
