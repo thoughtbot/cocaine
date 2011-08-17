@@ -87,18 +87,22 @@ describe Cocaine::CommandLine do
     cmd.command.should == "convert a.jpg b.png 2>NUL"
   end
 
-  it "raises if trying to interpolate :swallow_stderr or :expected_outcodes" do
-    cmd = Cocaine::CommandLine.new("convert",
-                                     ":swallow_stderr :expected_outcodes",
-                                     :swallow_stderr => false,
-                                     :expected_outcodes => [0, 1])
-
-    lambda do
-      cmd.command
-    end.should raise_error(Cocaine::CommandLineError)
+  it "raises if trying to interpolate :swallow_stderr" do
+    cmd = Cocaine::CommandLine.new("convert", ":swallow_stderr", :swallow_stderr => false)
+    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
   end
 
-  it "runs the #command it's given and return the output" do
+  it "raises if trying to interpolate :expected_outcodes" do
+    cmd = Cocaine::CommandLine.new("convert", ":expected_outcodes", :expected_outcodes => [0])
+    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
+  end
+
+  it "raises if trying to interpolate :logger" do
+    cmd = Cocaine::CommandLine.new("convert", ":logger", :logger => stub)
+    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
+  end
+
+  it "runs the command it's given and return the output" do
     cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
     cmd.class.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(0) do
@@ -141,5 +145,25 @@ describe Cocaine::CommandLine do
   it "detects that the system is windows (mingw)" do
     on_windows!("mingw")
     Cocaine::CommandLine.unix?.should be_false
+  end
+
+  it "logs the command to a supplied logger" do
+    logger = stub
+    logger.stubs(:info).with(anything).returns(nil)
+    Cocaine::CommandLine.new("echo", "'Logging!'", :logger => logger).run
+    logger.should have_received(:info).with("\e[32mCommand\e[0m :: echo 'Logging!'")
+  end
+
+  it "logs the command to a default logger" do
+    Cocaine::CommandLine.logger = stub
+    Cocaine::CommandLine.logger.stubs(:info).with(anything).returns(nil)
+    Cocaine::CommandLine.new("echo", "'Logging!'").run
+    Cocaine::CommandLine.logger.should have_received(:info).with("\e[32mCommand\e[0m :: echo 'Logging!'")
+  end
+
+  it "is fine if no logger is supplied" do
+    Cocaine::CommandLine.logger = nil
+    cmd = Cocaine::CommandLine.new("echo", "'Logging!'", :logger => nil)
+    lambda { cmd.run }.should_not raise_error
   end
 end

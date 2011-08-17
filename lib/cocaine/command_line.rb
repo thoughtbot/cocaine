@@ -1,13 +1,14 @@
 module Cocaine
   class CommandLine
     class << self
-      attr_accessor :path
+      attr_accessor :path, :logger
     end
 
     def initialize(binary, params = "", options = {})
       @binary            = binary.dup
       @params            = params.dup
       @options           = options.dup
+      @logger            = @options.delete(:logger) || self.class.logger
       @swallow_stderr    = @options.delete(:swallow_stderr)
       @expected_outcodes = @options.delete(:expected_outcodes)
       @expected_outcodes ||= [0]
@@ -25,6 +26,7 @@ module Cocaine
       output = ''
       begin
         with_modified_path do
+          @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
           output = self.class.send(:'`', command)
         end
       rescue Errno::ENOENT
@@ -66,7 +68,7 @@ module Cocaine
     end
 
     def invalid_variables
-      %w(expected_outcodes swallow_stderr)
+      %w(expected_outcodes swallow_stderr logger)
     end
 
     def interpolation(vars, key)
