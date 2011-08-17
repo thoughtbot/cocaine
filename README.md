@@ -75,7 +75,17 @@ But don't fear, you can specify where to look for the command.
 ```ruby
 Cocaine::CommandLine.path = "/opt/bin"
 line = Cocaine::CommandLine.new("lolwut")
-line.command # => "/opt/bin/lolwut"
+line.command # => "lolwut", but it looks in /opt/bin for it.
+```
+
+You can even give it a bunch of places to look.
+
+```ruby
+FileUtils.rm("/opt/bin/lolwut")
+`echo 'echo Hello' > /usr/local/bin/lolwut`
+Cocaine::CommandLine.path = ["/opt/bin", "/usr/local/bin"]
+line = Cocaine::CommandLine.new("lolwut")
+line.run # => prints 'Hello', because it searches the path
 ```
 
 Or, just, you know, put it in the command.
@@ -94,6 +104,20 @@ begin
 rescue Cocaine::ExitStatusError => e
   # => You never get here!
 end
+```
+
+You can see what's getting run. The 'Command' part it logs is in green for visibility!
+
+```ruby
+line = Cocaine::CommandLine.new("echo", ":var", :var => "LOL!", :logger => Logger.new(STDOUT))
+line.run # => Logs this with #info -> Command :: echo 'LOL!'
+```
+
+But you don't have to, as you saw above where it doesn't use this. But you CAN log every command!
+
+```ruby
+Cocaine::CommandLine.logger = Logger.new(STDOUT)
+Cocaine::CommandLine.new("date").run # => Logs this -> Command :: date
 ```
 
 ## License
