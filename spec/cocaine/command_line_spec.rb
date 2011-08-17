@@ -28,6 +28,7 @@ describe Cocaine::CommandLine do
   end
 
   it "can interpolate quoted variables into the parameters" do
+    on_unix!
     cmd = Cocaine::CommandLine.new("convert",
                                      ":one :{two}",
                                      :one => "a.jpg",
@@ -37,7 +38,7 @@ describe Cocaine::CommandLine do
   end
 
   it "quotes command line options differently if we're on windows" do
-    Cocaine::CommandLine.stubs(:unix?).returns(false)
+    on_windows!
     cmd = Cocaine::CommandLine.new("convert",
                                      ":one :{two}",
                                      :one => "a.jpg",
@@ -56,7 +57,7 @@ describe Cocaine::CommandLine do
   end
 
   it "can quote and interpolate dangerous variables even on windows" do
-    Cocaine::CommandLine.stubs(:unix?).returns(false)
+    on_windows!
     cmd = Cocaine::CommandLine.new("convert",
                                      ":one :two",
                                      :one => "`rm -rf`.jpg",
@@ -80,7 +81,7 @@ describe Cocaine::CommandLine do
   end
 
   it "adds redirection to get rid of stderr in cmd.exe" do
-    Cocaine::CommandLine.stubs(:unix?).returns(false)
+    on_windows!
     cmd = Cocaine::CommandLine.new("convert",
                                      "a.jpg b.png",
                                      :swallow_stderr => true)
@@ -130,13 +131,18 @@ describe Cocaine::CommandLine do
     end
   end
 
-  it "detects that the system is unix or windows based on RbConfig" do
-    Config::CONFIG.stubs(:[]).with('host_os').returns('darwin')
-    Cocaine::CommandLine.unix?.should == true
+  it "detects that the system is unix" do
+    on_unix!
+    Cocaine::CommandLine.unix?.should be_true
   end
 
-  it "detects that the system is not unix or windows based on RbConfig" do
-    Config::CONFIG.stubs(:[]).with('host_os').returns('mswin')
-    Cocaine::CommandLine.unix?.should_not == true
+  it "detects that the system is windows" do
+    on_windows!
+    Cocaine::CommandLine.unix?.should be_false
+  end
+
+  it "detects that the system is windows (mingw)" do
+    on_windows!("mingw")
+    Cocaine::CommandLine.unix?.should be_false
   end
 end
