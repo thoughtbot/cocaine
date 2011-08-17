@@ -3,15 +3,15 @@ require 'spec_helper'
 describe Cocaine::CommandLine do
   before do
     Cocaine::CommandLine.path = nil
-    Config::CONFIG.stubs(:[]).with('host_os').returns('darwin')
+    on_unix! # Assume we're on unix unless otherwise specified.
   end
 
-  it "takes a command and parameters and produce a shell command for bash" do
+  it "takes a command and parameters and produces a Bash command line" do
     cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
     cmd.command.should == "convert a.jpg b.png"
   end
 
-  it "specifies the path where the command should be run" do
+  it "specifies the $PATH where the command can be found" do
     Cocaine::CommandLine.path = "/path/to/command/dir"
     cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{PATH}]'")
     cmd.command.should == "ruby -e 'puts ENV[%{PATH}]'"
@@ -19,7 +19,7 @@ describe Cocaine::CommandLine do
     output.should match(%r{/path/to/command/dir})
   end
 
-  it "specifies more than one path where the command should be run" do
+  it "specifies more than one path where the command can be found" do
     Cocaine::CommandLine.path = ["/path/to/command/dir", "/some/other/path"]
     cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{PATH}]'")
     output = cmd.run
@@ -27,42 +27,41 @@ describe Cocaine::CommandLine do
     output.should match(%r{/some/other/path})
   end
 
-  it "can interpolate quoted variables into the parameters" do
-    on_unix!
+  it "can interpolate quoted variables into the command line's parameters" do
     cmd = Cocaine::CommandLine.new("convert",
-                                     ":one :{two}",
-                                     :one => "a.jpg",
-                                     :two => "b.png",
-                                     :swallow_stderr => false)
+                                   ":one :{two}",
+                                   :one => "a.jpg",
+                                   :two => "b.png",
+                                   :swallow_stderr => false)
     cmd.command.should == "convert 'a.jpg' 'b.png'"
   end
 
   it "quotes command line options differently if we're on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
-                                     ":one :{two}",
-                                     :one => "a.jpg",
-                                     :two => "b.png",
-                                     :swallow_stderr => false)
+                                   ":one :{two}",
+                                   :one => "a.jpg",
+                                   :two => "b.png",
+                                   :swallow_stderr => false)
     cmd.command.should == 'convert "a.jpg" "b.png"'
   end
 
   it "can quote and interpolate dangerous variables" do
     cmd = Cocaine::CommandLine.new("convert",
-                                     ":one :two",
-                                     :one => "`rm -rf`.jpg",
-                                     :two => "ha'ha.png",
-                                     :swallow_stderr => false)
+                                   ":one :two",
+                                   :one => "`rm -rf`.jpg",
+                                   :two => "ha'ha.png",
+                                   :swallow_stderr => false)
     cmd.command.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'"
   end
 
   it "can quote and interpolate dangerous variables even on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
-                                     ":one :two",
-                                     :one => "`rm -rf`.jpg",
-                                     :two => "ha'ha.png",
-                                     :swallow_stderr => false)
+                                   ":one :two",
+                                   :one => "`rm -rf`.jpg",
+                                   :two => "ha'ha.png",
+                                   :swallow_stderr => false)
     cmd.command.should == %{convert "`rm -rf`.jpg" "ha'ha.png"}
   end
 
@@ -71,20 +70,19 @@ describe Cocaine::CommandLine do
     cmd.command.should == "convert 'a.jpg' xc:black 'b.jpg'"
   end
 
-  it "adds redirection to get rid of stderr in bash" do
-    Cocaine::CommandLine.stubs(:unix?).returns(true)
+  it "can redirect stderr to the bit bucket if requested" do
     cmd = Cocaine::CommandLine.new("convert",
-                                     "a.jpg b.png",
-                                     :swallow_stderr => true)
+                                   "a.jpg b.png",
+                                   :swallow_stderr => true)
 
     cmd.command.should == "convert a.jpg b.png 2>/dev/null"
   end
 
-  it "adds redirection to get rid of stderr in cmd.exe" do
+  it "can redirect stderr to the bit bucket on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
-                                     "a.jpg b.png",
-                                     :swallow_stderr => true)
+                                   "a.jpg b.png",
+                                   :swallow_stderr => true)
 
     cmd.command.should == "convert a.jpg b.png 2>NUL"
   end
@@ -108,7 +106,7 @@ describe Cocaine::CommandLine do
     end
   end
 
-  it "raises a CommandLineError if the result code isn't expected" do
+  it "raises a CommandLineError if the result code from the command isn't expected" do
     cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
     cmd.class.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(1) do
@@ -118,11 +116,11 @@ describe Cocaine::CommandLine do
     end
   end
 
-  it "does not raise a CommandLineError if the result code is expected" do
+  it "does not raise if the result code is expected, even if nonzero" do
     cmd = Cocaine::CommandLine.new("convert",
-                                     "a.jpg b.png",
-                                     :expected_outcodes => [0, 1],
-                                     :swallow_stderr => false)
+                                   "a.jpg b.png",
+                                   :expected_outcodes => [0, 1],
+                                   :swallow_stderr => false)
     cmd.class.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(1) do
       lambda do
@@ -132,7 +130,6 @@ describe Cocaine::CommandLine do
   end
 
   it "detects that the system is unix" do
-    on_unix!
     Cocaine::CommandLine.unix?.should be_true
   end
 
