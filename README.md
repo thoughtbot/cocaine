@@ -13,7 +13,7 @@ Question? Idea? Problem? Bug? Something else? Comment? Concern? Like use questio
 The basic, normal stuff.
 
 ```ruby
-line = Cocaine::CommandLine.run("command", "some 'crazy' options")
+line = Cocaine::CommandLine.new("command", "some 'crazy' options")
 line.command      # => "command some 'crazy' options"
 output = line.run # => Get you some output!
 ```
