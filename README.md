@@ -24,7 +24,7 @@ Allowing arguments to be dynamic.
 line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out",
                                 :in => "omg.jpg",
                                 :resolution => "32x32",
-                                :out => omg_thumb.jpg")
+                                :out => "omg_thumb.jpg")
 line.command # => "convert 'omg.jpg' -scale '32x32' 'omg_thumb.jpg'"
 ```
 
