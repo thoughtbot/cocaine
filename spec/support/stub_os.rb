@@ -9,6 +9,6 @@ module StubOS
 
   def stub_os(host_string)
     # http://blog.emptyway.com/2009/11/03/proper-way-to-detect-windows-platform-in-ruby/
-    Config::CONFIG.stubs(:[]).with('host_os').returns(host_string)
+    RbConfig::CONFIG.stubs(:[]).with('host_os').returns(host_string)
   end
 end
