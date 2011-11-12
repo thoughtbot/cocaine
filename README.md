@@ -18,7 +18,7 @@ line.command      # => "command some 'crazy' options"
 output = line.run # => Get you some output!
 ```
 
-Allowing arguments to be dynamic.
+Allowing arguments to be dynamic:
 
 ```ruby
 line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out",
@@ -28,7 +28,7 @@ line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out",
 line.command # => "convert 'omg.jpg' -scale '32x32' 'omg_thumb.jpg'"
 ```
 
-It prevents attempts at being bad.
+It prevents attempts at being bad:
 
 ```ruby
 line = Cocaine::CommandLine.new("cat", ":file", :file => "haha`rm -rf /`.txt")
@@ -38,7 +38,7 @@ line = Cocaine::CommandLine.new("cat", ":file", :file => "ohyeah?'`rm -rf /`.ha!
 line.command # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
 ```
 
-You can ignore the result.
+You can ignore the result:
 
 ```ruby
 line = Cocaine::CommandLine.new("noisy", "--extra-verbose", :swallow_stderr => true)
@@ -48,7 +48,7 @@ line.command # => "noisy --extra-verbose 2>/dev/null"
 line.command # => "noisy --extra-verbose 2>NUL"
 ```
 
-If your command errors, you get an exception.
+If your command errors, you get an exception:
 
 ```ruby
 line = Cocaine::CommandLine.new("git", "commit")
@@ -59,7 +59,7 @@ rescue Cocaine::ExitStatusError => e
 end
 ```
 
-You don't have the command? You get an exception.
+You don't have the command? You get an exception:
 
 ```ruby
 line = Cocaine::CommandLine.new("lolwut")
@@ -70,7 +70,7 @@ rescue Cocaine::CommandNotFoundError => e
 end
 ```
 
-But don't fear, you can specify where to look for the command.
+But don't fear, you can specify where to look for the command:
 
 ```ruby
 Cocaine::CommandLine.path = "/opt/bin"
@@ -78,24 +78,24 @@ line = Cocaine::CommandLine.new("lolwut")
 line.command # => "lolwut", but it looks in /opt/bin for it.
 ```
 
-You can even give it a bunch of places to look.
+You can even give it a bunch of places to look:
 
 ```ruby
-FileUtils.rm("/opt/bin/lolwut")
-`echo 'echo Hello' > /usr/local/bin/lolwut`
-Cocaine::CommandLine.path = ["/opt/bin", "/usr/local/bin"]
-line = Cocaine::CommandLine.new("lolwut")
-line.run # => prints 'Hello', because it searches the path
+    FileUtils.rm("/opt/bin/lolwut")
+    `echo 'echo Hello' > /usr/local/bin/lolwut`
+    Cocaine::CommandLine.path = ["/opt/bin", "/usr/local/bin"]
+    line = Cocaine::CommandLine.new("lolwut")
+    line.run # => prints 'Hello', because it searches the path
 ```
 
-Or, just, you know, put it in the command.
+Or just put it in the command:
 
 ```ruby
 line = Cocaine::CommandLine.new("/opt/bin/lolwut")
 line.command # => "/opt/bin/lolwut"
 ```
 
-If your command might return something non-zero, and you expect that, it's cool.
+If your command might return something non-zero, and you expect that, it's cool:
 
 ```ruby
 line = Cocaine::CommandLine.new("/usr/bin/false", "", :expected_outcodes => [0, 1])
