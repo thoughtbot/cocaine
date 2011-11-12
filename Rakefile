@@ -1,6 +1,4 @@
-require 'rubygems'
-require 'bundler/setup'
-require 'rake'
+require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
 desc 'Default: Run specs.'
@@ -12,4 +10,3 @@ namespace :spec do
     t.pattern = 'spec/cocaine/**/*_spec.rb'
   end
 end
-
