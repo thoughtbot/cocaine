@@ -78,9 +78,9 @@ module Cocaine
     end
 
     def shell_quote(string)
-      return "" if string.nil? or string.empty?
+      return "" if string.nil?
       if self.class.unix?
-        string.split("'").map{|m| "'#{m}'" }.join("\\'")
+        string.empty? ? "''" : string.split("'").map{|m| "'#{m}'" }.join("\\'")
       else
         %{"#{string}"}
       end

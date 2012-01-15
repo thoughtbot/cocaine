@@ -65,6 +65,15 @@ describe Cocaine::CommandLine do
     cmd.command.should == %{convert "`rm -rf`.jpg" "ha'ha.png"}
   end
 
+  it "quotes blank values into the command line's parameters" do
+    cmd = Cocaine::CommandLine.new("curl",
+                                   "-X POST -d :data :url",
+                                   :data => "",
+                                   :url => "http://localhost:9000",
+                                   :swallow_stderr => false)
+    cmd.command.should == "curl -X POST -d '' 'http://localhost:9000'"
+  end
+
   it "allows colons in parameters" do
     cmd = Cocaine::CommandLine.new("convert", "'a.jpg' xc:black 'b.jpg'", :swallow_stderr => false)
     cmd.command.should == "convert 'a.jpg' xc:black 'b.jpg'"
