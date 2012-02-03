@@ -1,10 +1,10 @@
 module StubOS
-  def on_windows!(host_string = 'mswin')
-    stub_os(host_string)
+  def on_windows!
+    stub_os('mswin')
   end
 
-  def on_unix!(host_string = 'darwin11.0.0')
-    stub_os(host_string)
+  def on_unix!
+    stub_os('darwin11.0.0')
   end
 
   def stub_os(host_string)
