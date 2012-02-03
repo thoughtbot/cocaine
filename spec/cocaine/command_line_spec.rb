@@ -143,17 +143,17 @@ describe Cocaine::CommandLine do
   end
 
   it "detects that the system is unix" do
-    Cocaine::CommandLine.unix?.should be_true
+    Cocaine::CommandLine.new("convert").unix?.should be_true
   end
 
   it "detects that the system is windows" do
     on_windows!
-    Cocaine::CommandLine.unix?.should be_false
+    Cocaine::CommandLine.new("convert").unix?.should be_false
   end
 
   it "detects that the system is windows (mingw)" do
     on_mingw!
-    Cocaine::CommandLine.unix?.should be_false
+    Cocaine::CommandLine.new("convert").unix?.should be_false
   end
 
   it "logs the command to a supplied logger" do

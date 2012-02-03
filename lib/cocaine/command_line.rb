@@ -41,6 +41,10 @@ module Cocaine
       output
     end
 
+    def unix?
+      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+    end
+
     private
 
     def with_modified_path
@@ -79,7 +83,7 @@ module Cocaine
 
     def shell_quote(string)
       return "" if string.nil?
-      if self.class.unix?
+      if unix?
         if string.empty?
           "''"
         else
@@ -91,11 +95,7 @@ module Cocaine
     end
 
     def bit_bucket
-      self.class.unix? ? "2>/dev/null" : "2>NUL"
-    end
-
-    def self.unix?
-      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+      unix? ? "2>/dev/null" : "2>NUL"
     end
   end
 end
