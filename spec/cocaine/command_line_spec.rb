@@ -152,7 +152,7 @@ describe Cocaine::CommandLine do
   end
 
   it "detects that the system is windows (mingw)" do
-    stub_os("mingw")
+    on_mingw!
     Cocaine::CommandLine.unix?.should be_false
   end
 
