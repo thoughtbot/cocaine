@@ -4,6 +4,8 @@ module Cocaine
       attr_accessor :path, :logger
     end
 
+    attr_reader :exit_status
+
     def initialize(binary, params = "", options = {})
       @binary            = binary.dup
       @params            = params.dup
@@ -31,6 +33,8 @@ module Cocaine
         end
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
+      ensure
+        @exit_status = $?.exitstatus
       end
       if $?.exitstatus == 127
         raise Cocaine::CommandNotFoundError

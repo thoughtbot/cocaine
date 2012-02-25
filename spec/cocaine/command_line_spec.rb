@@ -142,6 +142,15 @@ describe Cocaine::CommandLine do
     end
   end
 
+  it "should keep result code in #exitstatus" do
+    cmd = Cocaine::CommandLine.new("convert")
+    cmd.class.stubs(:"`").with("convert").returns(:correct_value)
+    with_exitstatus_returning(1) do
+      cmd.run rescue nil
+    end
+    cmd.exit_status.should == 1
+  end
+
   it "detects that the system is unix" do
     Cocaine::CommandLine.new("convert").unix?.should be_true
   end
