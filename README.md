@@ -1,4 +1,4 @@
-# Cocaine
+# Cocaine [![Build Status](https://secure.travis-ci.org/thoughtbot/paperclip.png)](http://travis-ci.org/thoughtbot/paperclip)
 
 A small library for doing (command) lines.
 
