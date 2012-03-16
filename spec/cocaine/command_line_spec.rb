@@ -144,7 +144,7 @@ describe Cocaine::CommandLine do
 
   it "should keep result code in #exitstatus" do
     cmd = Cocaine::CommandLine.new("convert")
-    cmd.class.stubs(:"`").with("convert").returns(:correct_value)
+    cmd.stubs(:"`").with("convert").returns(:correct_value)
     with_exitstatus_returning(1) do
       cmd.run rescue nil
     end
