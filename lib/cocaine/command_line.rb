@@ -1,5 +1,13 @@
 module Cocaine
   class CommandLine
+    # Check for posix-spawn gem. If it is available it will prevent the invoked processes
+    # from getting a copy of the ruby heap which can lead to significant performance gains.
+    begin
+     require 'posix/spawn'
+    rescue LoadError => e
+      # posix-spawn gem not available
+    end
+    
     class << self
       attr_accessor :path, :logger
     end
@@ -14,6 +22,7 @@ module Cocaine
       @swallow_stderr    = @options.delete(:swallow_stderr)
       @expected_outcodes = @options.delete(:expected_outcodes)
       @expected_outcodes ||= [0]
+      extend(POSIX::Spawn) if defined?(POSIX::Spawn)
     end
 
     def command
@@ -29,7 +38,7 @@ module Cocaine
       begin
         with_modified_path do
           @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
-          output = self.class.send(:'`', command)
+          output = send(:'`', command)
         end
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError

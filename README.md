@@ -119,6 +119,9 @@ But you don't have to, as you saw above where it doesn't use this. But you CAN l
 Cocaine::CommandLine.logger = Logger.new(STDOUT)
 Cocaine::CommandLine.new("date").run # => Logs this -> Command :: date
 ```
+## POSIX Spawn
+
+You can potentially increase performance by installing the posix-spawn gem (https://rubygems.org/gems/posix-spawn). This gem can keep your application's heap from being copied when forking command line processesG. For applications with large heaps the gain can be significant. To include posix-spawn, simply add it to your Gemfile or, if you don't use bundler, install the gem.
 
 ## License
 
