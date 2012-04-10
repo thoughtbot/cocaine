@@ -55,7 +55,10 @@ module Cocaine
     end
 
     def unix?
-      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+      if (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+        return true
+      end
+      return !ENV['SHELL'].nil?
     end
 
     private
