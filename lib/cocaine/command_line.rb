@@ -111,7 +111,7 @@ module Cocaine
     end
 
     def bit_bucket
-      unix? ? "&2>/dev/null" : "2>NUL"
+      unix? ? "2>/dev/null" : "2>NUL"
     end
   end
 end
