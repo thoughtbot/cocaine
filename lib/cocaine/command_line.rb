@@ -7,7 +7,7 @@ module Cocaine
     rescue LoadError => e
       # posix-spawn gem not available
     end
-    
+
     class << self
       attr_accessor :path, :logger
     end
@@ -61,6 +61,10 @@ module Cocaine
       return !ENV['SHELL'].nil?
     end
 
+    def cygwin?
+      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/) and ENV['SHELL']
+    end
+
     private
 
     def with_modified_path
@@ -111,7 +115,13 @@ module Cocaine
     end
 
     def bit_bucket
-      unix? ? "2>/dev/null" : "2>NUL"
+      if cygwin?
+        "2>/dev/null"
+      elsif unix?
+        "&2>/dev/null"
+      else
+        "2>NUL"
+      end
     end
   end
 end
