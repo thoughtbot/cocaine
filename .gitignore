@@ -2,3 +2,5 @@
 .rbx
 *.gem
 Gemfile.lock
+*.swp
+*.swo
