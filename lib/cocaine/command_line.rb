@@ -9,8 +9,9 @@ module Cocaine
     end
     
     class << self
-      attr_accessor :path, :logger
+      attr_accessor :path, :logger, :environment
     end
+    @environment = {}
 
     attr_reader :exit_status
 
@@ -36,7 +37,8 @@ module Cocaine
     def run
       output = ''
       begin
-        with_modified_path do
+        set_modified_path
+        with_modified_environment do
           @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
           output = send(:'`', command)
         end
@@ -59,15 +61,24 @@ module Cocaine
     end
 
     private
-
-    def with_modified_path
+    
+    def with_modified_environment
       begin
-        saved_path = ENV['PATH']
-        extra_path = [self.class.path].flatten
-        ENV['PATH'] = [ENV['PATH'], *extra_path].join(File::PATH_SEPARATOR)
+        # Save current environment
+        saved_env = ENV.select {|k,v| self.class.environment.key?(k)}
+        # Update environment
+        ENV.update(self.class.environment)
         yield
       ensure
-        ENV['PATH'] = saved_path
+        # Restore old environment
+        ENV.update(saved_env)
+      end
+    end
+
+    def set_modified_path
+      unless self.class.path.nil? or self.class.path == ''
+        extra_path = [self.class.path].flatten
+        self.class.environment['PATH'] = [ENV['PATH'], *extra_path].join(File::PATH_SEPARATOR)
       end
     end
 
