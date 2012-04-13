@@ -7,9 +7,22 @@ module Cocaine
     rescue LoadError => e
       # posix-spawn gem not available
     end
-    
+
     class << self
-      attr_accessor :path, :logger, :environment
+      attr_accessor :logger
+
+      def path
+        @supplemental_path
+      end
+      def path=(supplemental_path)
+        @supplemental_path = supplemental_path
+        @supplemental_environment ||= {}
+        @supplemental_environment['PATH'] = [ENV['PATH'], *supplemental_path].join(File::PATH_SEPARATOR)
+      end
+
+      def environment
+        @supplemental_environment ||= {}
+      end
     end
     @environment = {}
 
@@ -37,7 +50,6 @@ module Cocaine
     def run
       output = ''
       begin
-        set_modified_path
         with_modified_environment do
           @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
           output = send(:'`', command)
@@ -61,24 +73,14 @@ module Cocaine
     end
 
     private
-    
+
     def with_modified_environment
       begin
-        # Save current environment
-        saved_env = ENV.select {|k,v| self.class.environment.key?(k)}
-        # Update environment
+        saved_env = ENV.to_hash
         ENV.update(self.class.environment)
         yield
       ensure
-        # Restore old environment
         ENV.update(saved_env)
-      end
-    end
-
-    def set_modified_path
-      unless self.class.path.nil? or self.class.path == ''
-        extra_path = [self.class.path].flatten
-        self.class.environment['PATH'] = [ENV['PATH'], *extra_path].join(File::PATH_SEPARATOR)
       end
     end
 
