@@ -69,7 +69,14 @@ module Cocaine
     end
 
     def unix?
-      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+      if (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+        return true
+      end
+      return !ENV['SHELL'].nil?
+    end
+
+    def cygwin?
+      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/) and ENV['SHELL']
     end
 
     private
@@ -121,7 +128,13 @@ module Cocaine
     end
 
     def bit_bucket
-      unix? ? "2>/dev/null" : "2>NUL"
+      if cygwin?
+        "2>/dev/null"
+      elsif unix?
+        "&2>/dev/null"
+      else
+        "2>NUL"
+      end
     end
   end
 end
