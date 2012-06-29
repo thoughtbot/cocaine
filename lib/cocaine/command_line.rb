@@ -1,11 +1,18 @@
 module Cocaine
   class CommandLine
-    # Check for posix-spawn gem. If it is available it will prevent the invoked processes
-    # from getting a copy of the ruby heap which can lead to significant performance gains.
+    class << self
+      attr_accessor :spawner
+    end
+
+    # Check for posix-spawn gem. If it is available it will prevent the
+    # invoked processes from getting a copy of the ruby heap which can
+    # lead to significant performance gains.
+
     begin
-     require 'posix/spawn'
+      require 'posix/spawn'
+      @@posix_spawn_available = true
     rescue LoadError => e
-      # posix-spawn gem not available
+      @@posix_spawn_available = false
     end
 
     class << self
@@ -20,13 +27,17 @@ module Cocaine
         @supplemental_environment['PATH'] = [ENV['PATH'], *supplemental_path].join(File::PATH_SEPARATOR)
       end
 
+      def posix_spawn_available?
+        @@posix_spawn_available
+      end
+
       def environment
         @supplemental_environment ||= {}
       end
     end
     @environment = {}
 
-    attr_reader :exit_status
+    attr_reader :exit_status, :runner
 
     def initialize(binary, params = "", options = {})
       @binary            = binary.dup
@@ -36,7 +47,7 @@ module Cocaine
       @swallow_stderr    = @options.delete(:swallow_stderr)
       @expected_outcodes = @options.delete(:expected_outcodes)
       @expected_outcodes ||= [0]
-      extend(POSIX::Spawn) if defined?(POSIX::Spawn)
+      @runner            = best_runner
     end
 
     def command
@@ -50,10 +61,8 @@ module Cocaine
     def run
       output = ''
       begin
-        with_modified_environment do
-          @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
-          output = send(:'`', command)
-        end
+        @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
+        output = execute(command)
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
       ensure
@@ -74,14 +83,14 @@ module Cocaine
 
     private
 
-    def with_modified_environment
-      begin
-        saved_env = ENV.to_hash
-        ENV.update(self.class.environment)
-        yield
-      ensure
-        ENV.update(saved_env)
-      end
+    def execute(command)
+      runner.call(command, self.class.environment)
+    end
+
+    def best_runner
+      return PosixRunner.new   if self.class.posix_spawn_available?
+      return ProcessRunner.new if Process.respond_to?(:spawn)
+      BackticksRunner.new
     end
 
     def interpolate(pattern, vars)

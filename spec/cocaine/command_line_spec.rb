@@ -120,7 +120,7 @@ describe Cocaine::CommandLine do
 
   it "runs the command it's given and return the output" do
     cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
-    cmd.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
+    cmd.stubs(:execute).with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(0) do
       cmd.run.should == :correct_value
     end
@@ -128,7 +128,7 @@ describe Cocaine::CommandLine do
 
   it "raises a CommandLineError if the result code from the command isn't expected" do
     cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
-    cmd.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
+    cmd.stubs(:execute).with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(1) do
       lambda do
         cmd.run
@@ -141,7 +141,7 @@ describe Cocaine::CommandLine do
                                    "a.jpg b.png",
                                    :expected_outcodes => [0, 1],
                                    :swallow_stderr => false)
-    cmd.stubs(:"`").with("convert a.jpg b.png").returns(:correct_value)
+    cmd.stubs(:execute).with("convert a.jpg b.png").returns(:correct_value)
     with_exitstatus_returning(1) do
       lambda do
         cmd.run
@@ -151,7 +151,7 @@ describe Cocaine::CommandLine do
 
   it "should keep result code in #exitstatus" do
     cmd = Cocaine::CommandLine.new("convert")
-    cmd.stubs(:"`").with("convert").returns(:correct_value)
+    cmd.stubs(:execute).with("convert").returns(:correct_value)
     with_exitstatus_returning(1) do
       cmd.run rescue nil
     end
@@ -191,31 +191,29 @@ describe Cocaine::CommandLine do
     cmd = Cocaine::CommandLine.new("echo", "'Logging!'", :logger => nil)
     lambda { cmd.run }.should_not raise_error
   end
-  
+
   describe "command execution" do
-    it "should use the ` method to invoke the command line" do
+    it "uses the BackticksRunner by default" do
+      Process.stubs(:respond_to?).with(:spawn).returns(false)
+      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(false)
+
       cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.stubs(:`).with(anything).returns(nil)
-      cmd.run
-      cmd.should have_received(:`).with("echo hello")
+      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
     end
-  
-    it "should use POSIX::Spawn to create processes if it is available" do
+
+    it "uses the ProcessRunner on 1.9 and it's available" do
+      Process.stubs(:respond_to?).with(:spawn).returns(true)
+      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(false)
+
       cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.method(:`).owner.should == POSIX::Spawn
-      cmd.run.chomp.should == "hello"
+      cmd.runner.class.should == Cocaine::CommandLine::ProcessRunner
     end
-  
-    it "should use the default Kernel spawning to create processes if POSIX::Spawn is not available" do
-      spawn = POSIX::Spawn
-      POSIX.send(:remove_const, :Spawn)
-      begin
-        cmd = Cocaine::CommandLine.new("echo", "hello")
-        cmd.method(:`).owner.should == Kernel
-        cmd.run.chomp.should == "hello"
-      ensure
-        POSIX.const_set(:Spawn, spawn)
-      end
+
+    it "uses the PosixRunner if the posix-spawn gem is available" do
+      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+
+      cmd = Cocaine::CommandLine.new("echo", "hello")
+      cmd.runner.class.should == Cocaine::CommandLine::PosixRunner
     end
   end
 end
