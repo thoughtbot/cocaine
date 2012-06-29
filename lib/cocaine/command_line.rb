@@ -1,21 +1,6 @@
 module Cocaine
   class CommandLine
     class << self
-      attr_accessor :spawner
-    end
-
-    # Check for posix-spawn gem. If it is available it will prevent the
-    # invoked processes from getting a copy of the ruby heap which can
-    # lead to significant performance gains.
-
-    begin
-      require 'posix/spawn'
-      @@posix_spawn_available = true
-    rescue LoadError => e
-      @@posix_spawn_available = false
-    end
-
-    class << self
       attr_accessor :logger
 
       def path
@@ -28,7 +13,12 @@ module Cocaine
       end
 
       def posix_spawn_available?
-        @@posix_spawn_available
+        @posix_spawn_available ||= begin
+          require 'posix/spawn'
+          true
+        rescue LoadError => e
+          false
+        end
       end
 
       def environment
