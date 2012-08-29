@@ -52,48 +52,49 @@ describe Cocaine::CommandLine do
   it "can interpolate quoted variables into the command line's parameters" do
     cmd = Cocaine::CommandLine.new("convert",
                                    ":one :{two}",
-                                   :one => "a.jpg",
-                                   :two => "b.png",
                                    :swallow_stderr => false)
-    cmd.command.should == "convert 'a.jpg' 'b.png'"
+
+    command_string = cmd.command(:one => "a.jpg", :two => "b.png")
+    command_string.should == "convert 'a.jpg' 'b.png'"
+  end
+
+  it "interpolates when running a command" do
+    command = Cocaine::CommandLine.new("echo", ":hello_world")
+    command.run(:hello_world => "Hello, world").should match(/Hello, world/)
   end
 
   it "quotes command line options differently if we're on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
                                    ":one :{two}",
-                                   :one => "a.jpg",
-                                   :two => "b.png",
                                    :swallow_stderr => false)
-    cmd.command.should == 'convert "a.jpg" "b.png"'
+    command_string = cmd.command(:one => "a.jpg", :two => "b.png")
+    command_string.should == 'convert "a.jpg" "b.png"'
   end
 
   it "can quote and interpolate dangerous variables" do
     cmd = Cocaine::CommandLine.new("convert",
                                    ":one :two",
-                                   :one => "`rm -rf`.jpg",
-                                   :two => "ha'ha.png",
                                    :swallow_stderr => false)
-    cmd.command.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'"
+    command_string = cmd.command(:one => "`rm -rf`.jpg", :two => "ha'ha.png")
+    command_string.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'"
   end
 
   it "can quote and interpolate dangerous variables even on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
                                    ":one :two",
-                                   :one => "`rm -rf`.jpg",
-                                   :two => "ha'ha.png",
                                    :swallow_stderr => false)
-    cmd.command.should == %{convert "`rm -rf`.jpg" "ha'ha.png"}
+    command_string = cmd.command(:one => "`rm -rf`.jpg", :two => "ha'ha.png")
+    command_string.should == %{convert "`rm -rf`.jpg" "ha'ha.png"}
   end
 
   it "quotes blank values into the command line's parameters" do
     cmd = Cocaine::CommandLine.new("curl",
                                    "-X POST -d :data :url",
-                                   :data => "",
-                                   :url => "http://localhost:9000",
                                    :swallow_stderr => false)
-    cmd.command.should == "curl -X POST -d '' 'http://localhost:9000'"
+    command_string = cmd.command(:data => "", :url => "http://localhost:9000")
+    command_string.should == "curl -X POST -d '' 'http://localhost:9000'"
   end
 
   it "allows colons in parameters" do
@@ -116,21 +117,6 @@ describe Cocaine::CommandLine do
                                    :swallow_stderr => true)
 
     cmd.command.should == "convert a.jpg b.png 2>NUL"
-  end
-
-  it "raises if trying to interpolate :swallow_stderr" do
-    cmd = Cocaine::CommandLine.new("convert", ":swallow_stderr", :swallow_stderr => false)
-    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
-  end
-
-  it "raises if trying to interpolate :expected_outcodes" do
-    cmd = Cocaine::CommandLine.new("convert", ":expected_outcodes", :expected_outcodes => [0])
-    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
-  end
-
-  it "raises if trying to interpolate :logger" do
-    cmd = Cocaine::CommandLine.new("convert", ":logger", :logger => stub)
-    lambda { cmd.command }.should raise_error(Cocaine::CommandLineError)
   end
 
   it "runs the command it's given and return the output" do
@@ -174,17 +160,17 @@ describe Cocaine::CommandLine do
   end
 
   it "detects that the system is unix" do
-    Cocaine::CommandLine.new("convert").unix?.should be_true
+    Cocaine::CommandLine.new("convert").should be_unix
   end
 
   it "detects that the system is windows" do
     on_windows!
-    Cocaine::CommandLine.new("convert").unix?.should be_false
+    Cocaine::CommandLine.new("convert").should_not be_unix
   end
 
   it "detects that the system is windows (mingw)" do
     on_mingw!
-    Cocaine::CommandLine.new("convert").unix?.should be_false
+    Cocaine::CommandLine.new("convert").should_not be_unix
   end
 
   it "logs the command to a supplied logger" do
