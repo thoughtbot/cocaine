@@ -33,11 +33,11 @@ module Cocaine
       @binary            = binary.dup
       @params            = params.dup
       @options           = options.dup
+      @runner            = best_runner
       @logger            = @options.delete(:logger) || self.class.logger
       @swallow_stderr    = @options.delete(:swallow_stderr)
-      @expected_outcodes = @options.delete(:expected_outcodes)
-      @expected_outcodes ||= [0]
-      @runner            = best_runner
+      @expected_outcodes = @options.delete(:expected_outcodes) || [0]
+      @environment       = @options.delete(:environment) || {}
     end
 
     def command
@@ -78,7 +78,7 @@ module Cocaine
     end
 
     def environment
-      self.class.environment.merge(@options[:environment]||{})
+      self.class.environment.merge(@environment)
     end
 
     def best_runner
@@ -101,7 +101,7 @@ module Cocaine
     end
 
     def invalid_variables
-      %w(expected_outcodes swallow_stderr logger)
+      %w(expected_outcodes swallow_stderr logger environment)
     end
 
     def interpolation(vars, key)
