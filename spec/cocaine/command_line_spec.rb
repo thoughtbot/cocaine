@@ -26,12 +26,18 @@ describe Cocaine::CommandLine do
     output.should match(%r{/path/to/command/dir})
     output.should match(%r{/some/other/path})
   end
-  
+
   it "temporarily changes specified environment variables" do
     Cocaine::CommandLine.environment['TEST'] = 'Hello, world!'
     cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{TEST}]'")
     output = cmd.run
     output.should match(%r{Hello, world!})
+  end
+
+  it 'passes the existing environment variables through to the runner' do
+    command = Cocaine::CommandLine.new('echo', '$HOME')
+    output = command.run
+    output.chomp.should_not == ''
   end
 
   it "can interpolate quoted variables into the command line's parameters" do
