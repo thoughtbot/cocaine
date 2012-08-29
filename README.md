@@ -17,21 +17,21 @@ line.run # => "hello world\n"
 Interpolated arguments:
 
 ```ruby
-line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out",
-                                :in => "omg.jpg",
-                                :resolution => "32x32",
-                                :out => "omg_thumb.jpg")
-line.command # => "convert 'omg.jpg' -scale '32x32' 'omg_thumb.jpg'"
+line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out")
+line.command(:in => "omg.jpg",
+             :resolution => "32x32",
+             :out => "omg_thumb.jpg")
+# => "convert 'omg.jpg' -scale '32x32' 'omg_thumb.jpg'"
 ```
 
 It prevents attempts at being bad:
 
 ```ruby
-line = Cocaine::CommandLine.new("cat", ":file", :file => "haha`rm -rf /`.txt")
-line.command # => "cat 'haha`rm -rf /`.txt'"
+line = Cocaine::CommandLine.new("cat", ":file")
+line.command(:file => "haha`rm -rf /`.txt") # => "cat 'haha`rm -rf /`.txt'"
 
-line = Cocaine::CommandLine.new("cat", ":file", :file => "ohyeah?'`rm -rf /`.ha!")
-line.command # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
+line = Cocaine::CommandLine.new("cat", ":file")
+line.command(:file => "ohyeah?'`rm -rf /`.ha!") # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
 ```
 
 You can ignore the result:
@@ -105,8 +105,8 @@ line.command # => "/opt/bin/lolwut"
 You can see what's getting run. The 'Command' part it logs is in green for visibility!
 
 ```ruby
-line = Cocaine::CommandLine.new("echo", ":var", :var => "LOL!", :logger => Logger.new(STDOUT))
-line.run # => Logs this with #info -> Command :: echo 'LOL!'
+line = Cocaine::CommandLine.new("echo", ":var", :logger => Logger.new(STDOUT))
+line.run(:var => "LOL!") # => Logs this with #info -> Command :: echo 'LOL!'
 ```
 
 Or log every command:
