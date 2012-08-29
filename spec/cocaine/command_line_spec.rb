@@ -34,6 +34,15 @@ describe Cocaine::CommandLine do
     output.should match(%r{Hello, world!})
   end
 
+  it 'changes environment variables for the command line' do
+    Cocaine::CommandLine.environment['TEST'] = 'Hello, world!'
+    cmd = Cocaine::CommandLine.new("ruby",
+                                   "-e 'puts ENV[%{TEST}]'",
+                                   :environment => {'TEST' => 'Hej hej'})
+    output = cmd.run
+    output.should match(%r{Hej hej})
+  end
+
   it 'passes the existing environment variables through to the runner' do
     command = Cocaine::CommandLine.new('echo', '$HOME')
     output = command.run

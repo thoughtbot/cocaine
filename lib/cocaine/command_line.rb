@@ -74,7 +74,11 @@ module Cocaine
     private
 
     def execute(command)
-      runner.call(command, self.class.environment)
+      runner.call(command, environment)
+    end
+
+    def environment
+      self.class.environment.merge(@options[:environment]||{})
     end
 
     def best_runner
