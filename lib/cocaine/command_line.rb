@@ -52,19 +52,19 @@ module Cocaine
       @environment       = @options.delete(:environment) || {}
     end
 
-    def command(interpolation_dictionary = {})
+    def command(interpolations = {})
       cmd = []
       cmd << @binary
-      cmd << interpolate(@params, interpolation_dictionary)
+      cmd << interpolate(@params, interpolations)
       cmd << bit_bucket if @swallow_stderr
       cmd.join(" ").strip
     end
 
-    def run(interpolation_dictionary = {})
+    def run(interpolations = {})
       output = ''
       begin
         @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
-        output = execute(command(interpolation_dictionary))
+        output = execute(command(interpolations))
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
       ensure
@@ -93,9 +93,9 @@ module Cocaine
       self.class.environment.merge(@environment)
     end
 
-    def interpolate(pattern, interpolation_dictionary)
-      interpolation_dictionary.inject(pattern) do |command_string, (key, value)|
-        command_string.gsub(%r|:\{?#{key}\}?|) { shell_quote(value) }
+    def interpolate(pattern, interpolations)
+      interpolations.inject(pattern) do |command_string, (key, value)|
+        command_string.gsub(/:\{?#{key}\}?/) { shell_quote(value) }
       end
     end
 
