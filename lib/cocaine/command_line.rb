@@ -68,7 +68,7 @@ module Cocaine
     end
 
     def unix?
-      (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/).nil?
+      RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
     end
 
     private
