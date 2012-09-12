@@ -230,5 +230,21 @@ describe Cocaine::CommandLine do
       cmd = Cocaine::CommandLine.new("echo", "hello")
       cmd.runner.class.should == Cocaine::CommandLine::PosixRunner
     end
+
+    it "uses the BackticksRunner if the posix-spawn gem is available, but we told it to use Backticks all the time" do
+      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+      Cocaine::CommandLine.runner = Cocaine::CommandLine::BackticksRunner.new
+
+      cmd = Cocaine::CommandLine.new("echo", "hello")
+      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
+    end
+
+    it "uses the BackticksRunner if the posix-spawn gem is available, but we told it to use Backticks" do
+      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+
+      cmd = Cocaine::CommandLine.new("echo", "hello", :runner => Cocaine::CommandLine::BackticksRunner.new)
+      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
+    end
+
   end
 end

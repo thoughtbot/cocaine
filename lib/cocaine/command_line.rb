@@ -1,7 +1,7 @@
 module Cocaine
   class CommandLine
     class << self
-      attr_accessor :logger
+      attr_accessor :logger, :runner
 
       def path
         @supplemental_path
@@ -24,6 +24,18 @@ module Cocaine
       def environment
         @supplemental_environment ||= {}
       end
+
+      def runner
+        @runner || best_runner
+      end
+
+      private
+
+      def best_runner
+        return PosixRunner.new   if posix_spawn_available?
+        return ProcessRunner.new if Process.respond_to?(:spawn)
+        BackticksRunner.new
+      end
     end
     @environment = {}
 
@@ -33,7 +45,7 @@ module Cocaine
       @binary            = binary.dup
       @params            = params.dup
       @options           = options.dup
-      @runner            = best_runner
+      @runner            = @options.delete(:runner) || self.class.runner
       @logger            = @options.delete(:logger) || self.class.logger
       @swallow_stderr    = @options.delete(:swallow_stderr)
       @expected_outcodes = @options.delete(:expected_outcodes) || [0]
@@ -79,12 +91,6 @@ module Cocaine
 
     def environment
       self.class.environment.merge(@environment)
-    end
-
-    def best_runner
-      return PosixRunner.new   if self.class.posix_spawn_available?
-      return ProcessRunner.new if Process.respond_to?(:spawn)
-      BackticksRunner.new
     end
 
     def interpolate(pattern, vars)
