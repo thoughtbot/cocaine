@@ -1,3 +1,9 @@
+New for 0.3.1:
+
+* Made the `Runner` manually swappable, in case `ProcessRunner` doesn't work
+  for some reason.
+* Fixed copyright years.
+
 New for 0.3.0:
 
 * Support blank arguments.
