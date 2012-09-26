@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Cocaine::CommandLine::BackticksRunner do
+  it_behaves_like 'a command that does not block'
+
   it 'runs the command given' do
     subject.call("echo hello").should == "hello\n"
   end
