@@ -6,9 +6,10 @@ module Cocaine
         def call(command, env = {})
           input, output = IO.pipe
           pid = spawn(env, command, :out => output)
-          waitpid(pid)
           output.close
-          input.read
+          result = input.read
+          waitpid(pid)
+          result
         end
 
         private
