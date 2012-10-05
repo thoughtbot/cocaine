@@ -232,5 +232,27 @@ describe Cocaine::CommandLine do
       cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
     end
 
+    it "can go into 'Fake' mode" do
+      Cocaine::CommandLine.fake!
+
+      cmd = Cocaine::CommandLine.new("echo", "hello")
+      cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
+    end
+
+    it "can turn off Fake mode" do
+      Cocaine::CommandLine.fake!
+      Cocaine::CommandLine.unfake!
+
+      cmd = Cocaine::CommandLine.new("echo", "hello")
+      cmd.runner.class.should_not eq Cocaine::CommandLine::FakeRunner
+    end
+
+    it "can use a FakeRunner even if not in Fake mode" do
+      Cocaine::CommandLine.unfake!
+
+      cmd = Cocaine::CommandLine.new("echo", "hello", :runner => Cocaine::CommandLine::FakeRunner.new)
+      cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
+    end
+
   end
 end

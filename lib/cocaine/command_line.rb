@@ -29,6 +29,14 @@ module Cocaine
         @runner || best_runner
       end
 
+      def fake!
+        @runner = FakeRunner.new
+      end
+
+      def unfake!
+        @runner = nil
+      end
+
       private
 
       def best_runner
