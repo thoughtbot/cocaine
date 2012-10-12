@@ -174,17 +174,15 @@ describe Cocaine::CommandLine do
   end
 
   it "logs the command to a supplied logger" do
-    logger = stub
-    logger.stubs(:info).with(anything).returns(nil)
-    Cocaine::CommandLine.new("echo", "'Logging!'", :logger => logger).run
-    logger.should have_received(:info).with("\e[32mCommand\e[0m :: echo 'Logging!'")
+    logger = FakeLogger.new
+    Cocaine::CommandLine.new("echo", "'Logging!' :foo", :logger => logger).run(:foo => "bar")
+    logger.entries.should include("\e[32mCommand\e[0m :: echo 'Logging!' 'bar'")
   end
 
   it "logs the command to a default logger" do
-    Cocaine::CommandLine.logger = stub
-    Cocaine::CommandLine.logger.stubs(:info).with(anything).returns(nil)
+    Cocaine::CommandLine.logger = FakeLogger.new
     Cocaine::CommandLine.new("echo", "'Logging!'").run
-    Cocaine::CommandLine.logger.should have_received(:info).with("\e[32mCommand\e[0m :: echo 'Logging!'")
+    Cocaine::CommandLine.logger.entries.should include("\e[32mCommand\e[0m :: echo 'Logging!'")
   end
 
   it "is fine if no logger is supplied" do

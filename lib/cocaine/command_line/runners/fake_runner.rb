@@ -10,6 +10,7 @@ module Cocaine
 
       def call(command, env = {})
         commands << [command, env]
+        ""
       end
 
       def ran?(predicate_command)

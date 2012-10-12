@@ -71,8 +71,9 @@ module Cocaine
     def run(interpolations = {})
       output = ''
       begin
-        @logger.info("\e[32mCommand\e[0m :: #{command}") if @logger
-        output = execute(command(interpolations))
+        full_command = command(interpolations)
+        log("\e[32mCommand\e[0m :: #{full_command}")
+        output = execute(full_command)
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
       ensure
@@ -92,6 +93,12 @@ module Cocaine
     end
 
     private
+
+    def log(text)
+      if @logger
+        @logger.info(text)
+      end
+    end
 
     def execute(command)
       runner.call(command, environment)
