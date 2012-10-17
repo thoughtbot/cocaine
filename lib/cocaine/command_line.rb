@@ -72,7 +72,7 @@ module Cocaine
       output = ''
       begin
         full_command = command(interpolations)
-        log("\e[32mCommand\e[0m :: #{full_command}")
+        log("#{colored("Command")} :: #{full_command}")
         output = execute(full_command)
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
@@ -93,6 +93,14 @@ module Cocaine
     end
 
     private
+
+    def colored(text, ansi_color = "\e[32m")
+      if @logger && @logger.tty?
+        "#{ansi_color}#{text}\e[0m"
+      else
+        text
+      end
+    end
 
     def log(text)
       if @logger

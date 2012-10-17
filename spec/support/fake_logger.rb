@@ -1,5 +1,6 @@
 class FakeLogger
-  def initialize
+  def initialize(options = {})
+    @tty = options[:tty]
     @entries = []
   end
 
@@ -9,5 +10,9 @@ class FakeLogger
 
   def entries
     @entries
+  end
+
+  def tty?
+    @tty
   end
 end

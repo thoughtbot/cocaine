@@ -173,16 +173,22 @@ describe Cocaine::CommandLine do
     Cocaine::CommandLine.new("convert").should_not be_unix
   end
 
+  it "colorizes the output to a tty" do
+    logger = FakeLogger.new(:tty => true)
+    Cocaine::CommandLine.new("echo", "'Logging!' :foo", :logger => logger).run(:foo => "bar")
+    logger.entries.should include("\e[32mCommand\e[0m :: echo 'Logging!' 'bar'")
+  end
+
   it "logs the command to a supplied logger" do
     logger = FakeLogger.new
     Cocaine::CommandLine.new("echo", "'Logging!' :foo", :logger => logger).run(:foo => "bar")
-    logger.entries.should include("\e[32mCommand\e[0m :: echo 'Logging!' 'bar'")
+    logger.entries.should include("Command :: echo 'Logging!' 'bar'")
   end
 
   it "logs the command to a default logger" do
     Cocaine::CommandLine.logger = FakeLogger.new
     Cocaine::CommandLine.new("echo", "'Logging!'").run
-    Cocaine::CommandLine.logger.entries.should include("\e[32mCommand\e[0m :: echo 'Logging!'")
+    Cocaine::CommandLine.logger.entries.should include("Command :: echo 'Logging!'")
   end
 
   it "is fine if no logger is supplied" do
