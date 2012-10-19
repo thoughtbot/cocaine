@@ -6,6 +6,7 @@ require 'timeout'
 require 'tempfile'
 require 'pry'
 require 'active_support/buffered_logger'
+require 'thread'
 
 Dir[File.dirname(__FILE__) + "/support/**.rb"].each{|support_file| require support_file }
 
