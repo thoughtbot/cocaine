@@ -6,6 +6,7 @@ module Cocaine
       def path
         @supplemental_path
       end
+
       def path=(supplemental_path)
         @supplemental_path = supplemental_path
         @supplemental_environment ||= {}
@@ -45,6 +46,7 @@ module Cocaine
         BackticksRunner.new
       end
     end
+
     @environment = {}
 
     attr_reader :exit_status, :runner
