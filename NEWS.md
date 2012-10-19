@@ -1,3 +1,8 @@
+New for 0.4.2:
+
+* Loggers that don't understand `tty?`, like `ActiveSupport::BufferedLogger`
+  will still work.
+
 New for 0.4.1:
 
 * Introduce FakeRunner for testing, so you don't really run commands.

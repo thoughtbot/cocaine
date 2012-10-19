@@ -4,6 +4,8 @@ require 'bourne'
 require 'cocaine'
 require 'timeout'
 require 'tempfile'
+require 'pry'
+require 'active_support/buffered_logger'
 
 Dir[File.dirname(__FILE__) + "/support/**.rb"].each{|support_file| require support_file }
 

@@ -95,7 +95,7 @@ module Cocaine
     private
 
     def colored(text, ansi_color = "\e[32m")
-      if @logger && @logger.tty?
+      if @logger && @logger.respond_to?(:tty?) && @logger.tty?
         "#{ansi_color}#{text}\e[0m"
       else
         text
