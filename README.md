@@ -135,7 +135,7 @@ one of the `.spawn` runners don't work for you, you can override them manually
 by setting a new runner, like so:
 
 ```ruby
-Cocaine::CommandLine.runner = Cocaine::BackticksRunner.new
+Cocaine::CommandLine.runner = Cocaine::CommandLine::BackticksRunner.new
 ```
 
 And if you really want to, you can define your own Runner, though I can't
