@@ -1,7 +1,9 @@
+# coding: UTF-8
+
 module Cocaine
   class CommandLine
     class FakeRunner
-      
+
       attr_reader :commands
 
       def initialize
