@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 module Cocaine
   class CommandLine
     class BackticksRunner
