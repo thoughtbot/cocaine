@@ -7,9 +7,15 @@ module Cocaine
     class BackticksRunner
 
       def call(command, env = {})
-        ClimateControl.modify(env) do
+        with_modified_environment(env) do
           `#{command}`
         end
+      end
+
+      private
+
+      def with_modified_environment(env, &block)
+        ClimateControl.modify(env, &block)
       end
 
     end
