@@ -1,5 +1,7 @@
 # coding: UTF-8
 
+require 'climate_control'
+
 module Cocaine
   class CommandLine
     class BackticksRunner
@@ -12,14 +14,8 @@ module Cocaine
 
       private
 
-      def with_modified_environment(env)
-        begin
-          saved_env = ENV.to_hash
-          ENV.update(env)
-          yield
-        ensure
-          ENV.update(saved_env)
-        end
+      def with_modified_environment(env, &block)
+        ClimateControl.modify(env, &block)
       end
 
     end
