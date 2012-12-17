@@ -87,7 +87,12 @@ module Cocaine
         raise Cocaine::CommandNotFoundError
       end
       unless @expected_outcodes.include?($?.exitstatus)
-        raise Cocaine::ExitStatusError, "Command '#{command}' returned #{$?.exitstatus}. Expected #{@expected_outcodes.join(", ")}"
+        message = [
+          "Command '#{command}' returned #{$?.exitstatus}. Expected #{@expected_outcodes.join(", ")}",
+          "Here is the command output:\n",
+          output
+        ].join("\n")
+        raise Cocaine::ExitStatusError, message
       end
       output
     end

@@ -150,6 +150,21 @@ describe Cocaine::CommandLine do
     end
   end
 
+  it "adds command output to exception message if the result code is nonzero" do
+    cmd = Cocaine::CommandLine.new("convert",
+                                   "a.jpg b.png",
+                                   :swallow_stderr => false)
+    error_output = "Error 315"
+    cmd.stubs(:execute).with("convert a.jpg b.png").returns(error_output)
+    with_exitstatus_returning(1) do
+      begin
+        cmd.run
+      rescue Cocaine::ExitStatusError => e
+        e.message.should =~ /#{error_output}/
+      end
+    end
+  end
+
   it "should keep result code in #exitstatus" do
     cmd = Cocaine::CommandLine.new("convert")
     cmd.stubs(:execute).with("convert").returns(:correct_value)
