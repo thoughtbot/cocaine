@@ -88,7 +88,7 @@ module Cocaine
       end
       unless @expected_outcodes.include?($?.exitstatus)
         message = [
-          "Command '#{command}' returned #{$?.exitstatus}. Expected #{@expected_outcodes.join(", ")}",
+          "Command '#{full_command}' returned #{$?.exitstatus}. Expected #{@expected_outcodes.join(", ")}",
           "Here is the command output:\n",
           output
         ].join("\n")
