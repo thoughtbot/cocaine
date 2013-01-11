@@ -12,11 +12,17 @@ describe Cocaine::CommandLine do
   end
 
   it "specifies the $PATH where the command can be found" do
-    Cocaine::CommandLine.path = "/path/to/command/dir"
-    cmd = Cocaine::CommandLine.new("ruby", "-e 'puts ENV[%{PATH}]'")
-    cmd.command.should == "ruby -e 'puts ENV[%{PATH}]'"
-    output = cmd.run
-    output.should match(%r{/path/to/command/dir})
+    saved_path = ENV['PATH']
+    begin
+      ENV['PATH'] = "/the/environment/path:/other/bin"
+      Cocaine::CommandLine.path = "/path/to/command/dir"
+      cmd = Cocaine::CommandLine.new("echo", "$PATH")
+      cmd.command.should == "echo $PATH"
+      output = cmd.run
+      output.should match(%r{/path/to/command/dir:/the/environment/path:/other/bin})
+    ensure
+      ENV['PATH'] = saved_path
+    end
   end
 
   it "specifies more than one path where the command can be found" do
