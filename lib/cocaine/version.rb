@@ -1,5 +1,5 @@
 # coding: UTF-8
 
 module Cocaine
-  VERSION = "0.4.2".freeze
+  VERSION = "0.5.0".freeze
 end

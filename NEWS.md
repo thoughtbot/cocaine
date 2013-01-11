@@ -1,3 +1,13 @@
+New for 0.5.0:
+
+* Updated the copyrights to 2013
+* Added UTF encoding markers on code files to ensure they're interpreted as
+  UTF-8 instead of ASCII.
+* Swapped the ordering of the PATH and supplemental path. A binary in the
+  supplemental path will take precedence, now.
+* Errors contain the output of the erroring command, for inspection.
+* Use climate_control instead for environment management.
+
 New for 0.4.2:
 
 * Loggers that don't understand `tty?`, like `ActiveSupport::BufferedLogger`
