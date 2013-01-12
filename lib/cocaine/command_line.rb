@@ -12,7 +12,7 @@ module Cocaine
       def path=(supplemental_path)
         @supplemental_path = supplemental_path
         @supplemental_environment ||= {}
-        @supplemental_environment['PATH'] = [*supplemental_path, ENV['PATH']].join(File::PATH_SEPARATOR)
+        @supplemental_environment['PATH'] = (Array(supplemental_path) + [ENV['PATH']]).join(File::PATH_SEPARATOR)
       end
 
       def posix_spawn_available?
