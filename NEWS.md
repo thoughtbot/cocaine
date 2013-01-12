@@ -1,3 +1,7 @@
+New for 0.5.1:
+
+* Fixed a bug preventing running on 1.8.7 for no good reason.
+
 New for 0.5.0:
 
 * Updated the copyrights to 2013
