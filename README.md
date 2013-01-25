@@ -173,6 +173,8 @@ Question? Idea? Problem? Bug? Comment? Concern? Like using question marks?
 
 ## Credits
 
+Thank you to all [the contributors](https://github.com/thoughtbot/cocaine/graphs/contributors)!
+
 ![thoughtbot](http://thoughtbot.com/logo.png)
 
 Cocaine is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
