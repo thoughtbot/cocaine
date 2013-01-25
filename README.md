@@ -175,7 +175,7 @@ Question? Idea? Problem? Bug? Comment? Concern? Like using question marks?
 
 ![thoughtbot](http://thoughtbot.com/logo.png)
 
-Paperclip is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
+Cocaine is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
 
 The names and logos for thoughtbot are trademarks of thoughtbot, inc.
 
