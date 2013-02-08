@@ -171,6 +171,16 @@ Question? Idea? Problem? Bug? Comment? Concern? Like using question marks?
 
 [GitHub Issues For All!](https://github.com/thoughtbot/cocaine/issues)
 
+## Credits
+
+Thank you to all [the contributors](https://github.com/thoughtbot/cocaine/graphs/contributors)!
+
+![thoughtbot](http://thoughtbot.com/logo.png)
+
+Cocaine is maintained and funded by [thoughtbot, inc](http://thoughtbot.com/community)
+
+The names and logos for thoughtbot are trademarks of thoughtbot, inc.
+
 ## License
 
 Copyright 2011-2013 Jon Yurek and thoughtbot, inc. This is free software, and
