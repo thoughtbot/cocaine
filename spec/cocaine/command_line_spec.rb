@@ -69,6 +69,15 @@ describe Cocaine::CommandLine do
     command.run(:hello_world => "Hello, world").should match(/Hello, world/)
   end
 
+  it "does not blow up if running the command errored before the actual execution" do
+    assuming_no_processes_have_been_run
+    command = Cocaine::CommandLine.new("echo", ":hello_world")
+    command.stubs(:command).raises("An Error")
+
+    lambda{ command.run }.should raise_error("An Error")
+    command.exit_status.should be_nil
+  end
+
   it "quotes command line options differently if we're on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",

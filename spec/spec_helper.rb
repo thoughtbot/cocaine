@@ -14,4 +14,5 @@ RSpec.configure do |config|
   config.mock_with :mocha
   config.include WithExitstatus
   config.include StubOS
+  config.include UnsettingExitstatus
 end

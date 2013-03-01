@@ -74,6 +74,7 @@ module Cocaine
 
     def run(interpolations = {})
       output = ''
+      @exit_status = nil
       begin
         full_command = command(interpolations)
         log("#{colored("Command")} :: #{full_command}")
@@ -81,14 +82,14 @@ module Cocaine
       rescue Errno::ENOENT
         raise Cocaine::CommandNotFoundError
       ensure
-        @exit_status = $?.exitstatus
+        @exit_status = $?.exitstatus if $?.respond_to?(:exitstatus)
       end
-      if $?.exitstatus == 127
+      if @exit_status == 127
         raise Cocaine::CommandNotFoundError
       end
-      unless @expected_outcodes.include?($?.exitstatus)
+      unless @expected_outcodes.include?(@exit_status)
         message = [
-          "Command '#{full_command}' returned #{$?.exitstatus}. Expected #{@expected_outcodes.join(", ")}",
+          "Command '#{full_command}' returned #{@exit_status}. Expected #{@expected_outcodes.join(", ")}",
           "Here is the command output:\n",
           output
         ].join("\n")
