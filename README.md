@@ -34,6 +34,15 @@ line = Cocaine::CommandLine.new("cat", ":file")
 line.command(:file => "ohyeah?'`rm -rf /`.ha!") # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
 ```
 
+NOTE: It only does that for arguments interpolated via `run`, NOT argumnets
+passed into `new` (see 'Security' below):
+
+```ruby
+line = Cocaine::CommandLine.new("echo", "haha`whoami`")
+line.command # => "echo haha`whoami`"
+line.run # => "hahawebserver"
+```
+
 You can ignore the result:
 
 ```ruby
@@ -115,6 +124,17 @@ Or log every command:
 Cocaine::CommandLine.logger = Logger.new(STDOUT)
 Cocaine::CommandLine.new("date").run # => Logs this -> Command :: date
 ```
+
+## Security
+
+Short version: Only pass user-generated data into the `run` method and NOT
+`new`.
+
+As shown in examples above, Cocaine will only shell-escape what is passed in as
+interpolations to the `run` method. It WILL NOT escape what is passed in to the
+second argument of `new`. Cocaine assumes that you will not be manually
+passing user-generated data to that argument and will be using it as a template
+for your command line's structure.
 
 ## POSIX Spawn
 
