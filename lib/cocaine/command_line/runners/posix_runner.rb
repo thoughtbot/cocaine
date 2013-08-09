@@ -9,7 +9,10 @@ module Cocaine
           input, output = IO.pipe
           pid = spawn(env, command, :out => output)
           output.close
-          result = input.read
+          result = ""
+          while partial_result = input.read(8192)
+            result << partial_result
+          end
           waitpid(pid)
           result
         end
