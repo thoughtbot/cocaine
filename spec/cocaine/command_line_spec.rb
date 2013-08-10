@@ -211,7 +211,7 @@ describe Cocaine::CommandLine do
 
   it 'can still take something that does not respond to tty as a logger' do
     output_buffer = StringIO.new
-    logger = ActiveSupport::BufferedLogger.new(output_buffer)
+    logger = ActiveSupport::Logger.new(output_buffer)
     logger.should_not respond_to(:tty?)
     Cocaine::CommandLine.new("echo", "'Logging!' :foo", :logger => logger).run(:foo => "bar")
     output_buffer.rewind
