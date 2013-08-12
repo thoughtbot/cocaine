@@ -5,9 +5,10 @@ module Cocaine
     class PosixRunner
       if Cocaine::CommandLine.posix_spawn_available?
 
-        def call(command, env = {})
+        def call(command, env = {}, options = {})
           input, output = IO.pipe
-          pid = spawn(env, command, :out => output)
+          options[:out] = output
+          pid = spawn(env, command, options)
           output.close
           result = ""
           while partial_result = input.read(8192)

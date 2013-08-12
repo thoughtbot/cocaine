@@ -10,7 +10,7 @@ module Cocaine
         @commands = []
       end
 
-      def call(command, env = {})
+      def call(command, env = {}, options = {})
         commands << [command, env]
         ""
       end

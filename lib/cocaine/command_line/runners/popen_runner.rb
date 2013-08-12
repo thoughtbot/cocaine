@@ -3,9 +3,9 @@
 module Cocaine
   class CommandLine
     class PopenRunner
-      def call(command, env = {})
+      def call(command, env = {}, options = {})
         with_modified_environment(env) do
-          IO.popen(command, "r") do |pipe|
+          IO.popen(command, "r", options) do |pipe|
             pipe.read
           end
         end
