@@ -23,6 +23,10 @@ module Cocaine
         @runner || best_runner
       end
 
+      def runner_options
+        @default_runner_options ||= {}
+      end
+
       def fake!
         @runner = FakeRunner.new
       end
@@ -57,6 +61,7 @@ module Cocaine
       @swallow_stderr    = @options.delete(:swallow_stderr)
       @expected_outcodes = @options.delete(:expected_outcodes) || [0]
       @environment       = @options.delete(:environment) || {}
+      @runner_options    = @options.delete(:runner_options) || {}
     end
 
     def command(interpolations = {})
@@ -114,11 +119,15 @@ module Cocaine
     end
 
     def execute(command)
-      runner.call(command, environment)
+      runner.call(command, environment, runner_options)
     end
 
     def environment
       self.class.environment.merge(@environment)
+    end
+
+    def runner_options
+      self.class.runner_options.merge(@runner_options)
     end
 
     def interpolate(pattern, interpolations)

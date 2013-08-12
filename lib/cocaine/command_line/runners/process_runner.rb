@@ -15,9 +15,10 @@ module Cocaine
         self.class.supported?
       end
 
-      def call(command, env = {})
+      def call(command, env = {}, options = {})
         input, output = IO.pipe
-        pid = spawn(env, command, :out => output)
+        options[:out] = output
+        pid = spawn(env, command, options)
         output.close
         result = input.read
         waitpid(pid)
@@ -34,7 +35,7 @@ module Cocaine
       def waitpid(pid)
         begin
           Process.waitpid(pid)
-        rescue Errno::ECHILD => e
+        rescue Errno::ECHILD
           # In JRuby, waiting on a finished pid raises.
         end
       end

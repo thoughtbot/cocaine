@@ -13,7 +13,7 @@ module Cocaine
         self.class.supported?
       end
 
-      def call(command, env = {})
+      def call(command, env = {}, options = {})
         with_modified_environment(env) do
           `#{command}`
         end
