@@ -16,3 +16,13 @@ RSpec.configure do |config|
   config.include StubOS
   config.include UnsettingExitstatus
 end
+
+def best_logger
+  if ActiveSupport.const_defined?("Logger")
+    ActiveSupport::Logger
+  elsif ActiveSupport.const_defined?("BufferedLogger")
+    ActiveSupport::BufferedLogger
+  else
+    Logger
+  end
+end
