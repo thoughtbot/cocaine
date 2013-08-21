@@ -161,13 +161,25 @@ Cocaine::CommandLine.runner = Cocaine::CommandLine::BackticksRunner.new
 And if you really want to, you can define your own Runner, though I can't
 imagine why you would.
 
-### JRuby Caveat
+### JRuby issues
+
+#### Caveat
 
 If you get `Error::ECHILD` errors and are using JRuby, there is a very good
 chance that the error is actually in JRuby. This was brought to our attention
 in https://github.com/thoughtbot/cocaine/issues/24 and probably fixed in
 http://jira.codehaus.org/browse/JRUBY-6162. You *will* want to use the
 `BackticksRunner` if you are unable to update JRuby.
+
+#### Spawn warning
+
+If you get `unsupported spawn option: out` warning (like in [issue 38](https://github.com/thoughtbot/cocaine/issues/38)),
+try to use `PopenRunner`:
+
+```ruby
+Cocaine::CommandLine.runner = Cocaine::CommandLine::PopenRunner.new
+```
+
 
 ## REE
 
