@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Cocaine::CommandLine::PosixRunner do
-  if Cocaine::CommandLine::posix_spawn_available?
+  if Cocaine::CommandLine::PosixRunner.supported?
     it_behaves_like 'a command that does not block'
 
     it 'runs the command given' do
@@ -20,4 +20,3 @@ describe Cocaine::CommandLine::PosixRunner do
     end
   end
 end
-
