@@ -3,6 +3,13 @@
 module Cocaine
   class CommandLine
     class FakeRunner
+      def self.supported?
+        false
+      end
+
+      def supported?
+        self.class.supported?
+      end
 
       attr_reader :commands
 

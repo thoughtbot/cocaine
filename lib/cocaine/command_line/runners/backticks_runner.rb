@@ -5,6 +5,13 @@ require 'climate_control'
 module Cocaine
   class CommandLine
     class BackticksRunner
+      def self.supported?
+        true
+      end
+
+      def supported?
+        self.class.supported?
+      end
 
       def call(command, env = {})
         with_modified_environment(env) do
