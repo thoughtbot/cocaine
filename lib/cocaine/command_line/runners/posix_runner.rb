@@ -29,6 +29,7 @@ module Cocaine
           result << partial_result
         end
         waitpid(pid)
+        input.close
         result
       end
 

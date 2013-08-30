@@ -21,6 +21,7 @@ module Cocaine
         output.close
         result = input.read
         waitpid(pid)
+        input.close
         result
       end
 

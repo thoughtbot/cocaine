@@ -8,5 +8,7 @@ shared_examples_for "a command that does not block" do
       $?.exitstatus.should == 0
       output.length.should == 10 * 1024 * 1024
     end
+
+    garbage_file.close
   end
 end
