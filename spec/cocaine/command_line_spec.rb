@@ -238,38 +238,39 @@ describe Cocaine::CommandLine do
 
   describe "command execution" do
     it "uses the BackticksRunner by default" do
-      Process.stubs(:respond_to?).with(:spawn).returns(false)
-      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(false)
+      Cocaine::CommandLine::ProcessRunner.stubs(:supported?).returns(false)
+      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(false)
 
       cmd = Cocaine::CommandLine.new("echo", "hello")
+
       cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
     end
 
     it "uses the ProcessRunner on 1.9 and it's available" do
-      Process.stubs(:respond_to?).with(:spawn).returns(true)
-      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(false)
+      Cocaine::CommandLine::ProcessRunner.stubs(:supported?).returns(true)
+      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(false)
 
       cmd = Cocaine::CommandLine.new("echo", "hello")
       cmd.runner.class.should == Cocaine::CommandLine::ProcessRunner
     end
 
-    it "uses the PosixRunner if the posix-spawn gem is available" do
-      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+    it "uses the PosixRunner if the PosixRunner is available" do
+      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
 
       cmd = Cocaine::CommandLine.new("echo", "hello")
       cmd.runner.class.should == Cocaine::CommandLine::PosixRunner
     end
 
-    it "uses the BackticksRunner if the posix-spawn gem is available, but we told it to use Backticks all the time" do
-      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+    it "uses the BackticksRunner if the PosixRunner is available, but we told it to use Backticks all the time" do
+      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
       Cocaine::CommandLine.runner = Cocaine::CommandLine::BackticksRunner.new
 
       cmd = Cocaine::CommandLine.new("echo", "hello")
       cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
     end
 
-    it "uses the BackticksRunner if the posix-spawn gem is available, but we told it to use Backticks" do
-      Cocaine::CommandLine.stubs(:posix_spawn_available?).returns(true)
+    it "uses the BackticksRunner if the PosixRunner is available, but we told it to use Backticks" do
+      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
 
       cmd = Cocaine::CommandLine.new("echo", "hello", :runner => Cocaine::CommandLine::BackticksRunner.new)
       cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner

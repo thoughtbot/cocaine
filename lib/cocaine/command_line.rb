@@ -15,15 +15,6 @@ module Cocaine
         @supplemental_environment['PATH'] = (Array(supplemental_path) + [ENV['PATH']]).join(File::PATH_SEPARATOR)
       end
 
-      def posix_spawn_available?
-        @posix_spawn_available ||= begin
-          require 'posix/spawn'
-          true
-        rescue LoadError => e
-          false
-        end
-      end
-
       def environment
         @supplemental_environment ||= {}
       end
@@ -40,12 +31,16 @@ module Cocaine
         @runner = nil
       end
 
+      def java?
+        RUBY_PLATFORM =~ /java/
+      end
+
       private
 
       def best_runner
-        return PosixRunner.new   if posix_spawn_available?
-        return ProcessRunner.new if Process.respond_to?(:spawn)
-        BackticksRunner.new
+        [PosixRunner, ProcessRunner, BackticksRunner].detect do |runner|
+          runner.supported?
+        end.new
       end
     end
 
