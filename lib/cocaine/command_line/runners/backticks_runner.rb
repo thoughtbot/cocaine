@@ -6,7 +6,7 @@ module Cocaine
   class CommandLine
     class BackticksRunner
 
-      def call(command, env = {})
+      def call(command, env = {}, options = {})
         with_modified_environment(env) do
           `#{command}`
         end

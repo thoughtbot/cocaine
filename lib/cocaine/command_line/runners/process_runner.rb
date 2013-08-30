@@ -5,9 +5,10 @@ module Cocaine
     class ProcessRunner
       if Process.respond_to?(:spawn)
 
-        def call(command, env = {})
+        def call(command, env = {}, options = {})
           input, output = IO.pipe
-          pid = spawn(env, command, :out => output)
+          options[:out] = output
+          pid = spawn(env, command, options)
           output.close
           result = input.read
           waitpid(pid)
