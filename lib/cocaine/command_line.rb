@@ -123,7 +123,7 @@ module Cocaine
 
     def interpolate(pattern, interpolations)
       interpolations.inject(pattern) do |command_string, (key, value)|
-        command_string.gsub(/:\{?#{key}\}?/) { shell_quote(value) }
+        command_string.gsub(/:\{?#{key}\b\}?/) { shell_quote(value) }
       end
     end
 

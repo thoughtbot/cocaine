@@ -64,6 +64,15 @@ describe Cocaine::CommandLine do
     command_string.should == "convert 'a.jpg' 'b.png'"
   end
 
+  it 'does not over-interpolate in a command line' do
+    cmd = Cocaine::CommandLine.new("convert",
+                                   ":hell :{two} :hello",
+                                   :swallow_stderr => false)
+
+    command_string = cmd.command(:hell => "a.jpg", :two => "b.png", :hello => "c.tiff")
+    command_string.should == "convert 'a.jpg' 'b.png' 'c.tiff'"
+  end
+
   it "interpolates when running a command" do
     command = Cocaine::CommandLine.new("echo", ":hello_world")
     command.run(:hello_world => "Hello, world").should match(/Hello, world/)
