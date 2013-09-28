@@ -125,7 +125,11 @@ module Cocaine
       interpolations = stringify_keys(interpolations)
       pattern.gsub(/:\{?(\w+)\b\}?/) do |match|
         key = match.tr(":{}", "")
-        interpolations.key?(key) ? shell_quote(interpolations[key]) : match
+        if interpolations.key?(key)
+          Array(interpolations[key]).map { |value| shell_quote(value) }.join(" ")
+        else
+          match
+        end
       end
     end
 
