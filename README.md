@@ -34,7 +34,7 @@ line = Cocaine::CommandLine.new("cat", ":file")
 line.command(:file => "ohyeah?'`rm -rf /`.ha!") # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
 ```
 
-NOTE: It only does that for arguments interpolated via `run`, NOT argumnets
+NOTE: It only does that for arguments interpolated via `run`, NOT arguments
 passed into `new` (see 'Security' below):
 
 ```ruby
