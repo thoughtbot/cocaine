@@ -1,3 +1,17 @@
+New for 0.5.3:
+
+* SECURITY: Fix exploitable bug that could allow arbitrary command execution.
+  See CVE-2013-4457 for more details. Thanks to Holger Just for report and fix!
+* Bug fix: Sub-word interpolations can be confused for the longer version
+
+New for 0.5.2:
+
+* Improvement: Close all the IO objects!
+* Feature: Add an Runner that uses IO.popen, so JRuby can play
+* Improvement: Officially drop Ruby 1.8 support, add Ruby 2.0 support
+* Bug fix: Prevent a crash if no command was actually run
+* Improvement: Add security cautions to the README
+
 New for 0.5.1:
 
 * Fixed a bug preventing running on 1.8.7 for no good reason.
