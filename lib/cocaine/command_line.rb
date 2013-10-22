@@ -122,9 +122,19 @@ module Cocaine
     end
 
     def interpolate(pattern, interpolations)
-      interpolations.inject(pattern) do |command_string, (key, value)|
-        command_string.gsub(/:\{?#{key}\b\}?/) { shell_quote(value) }
+      interpolations = stringify_keys(interpolations)
+      pattern.gsub(/:\{?(\w+)\b\}?/) do |match|
+        key = match.tr(":{}", "")
+        interpolations.key?(key) ? shell_quote(interpolations[key]) : match
       end
+    end
+
+    def stringify_keys(hash)
+      hash = hash.dup
+      hash.keys.each do |key|
+        hash[key.to_s] = hash.delete(key)
+      end
+      hash
     end
 
     def shell_quote(string)

@@ -104,6 +104,11 @@ describe Cocaine::CommandLine do
     command_string.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'"
   end
 
+  it 'cannot recursively introduce a place where user-supplied commands can run' do
+    cmd = Cocaine::CommandLine.new('convert', ':foo :bar')
+    cmd.command(:foo => ':bar', :bar => '`rm -rf`').should == 'convert \':bar\' \'`rm -rf`\''
+  end
+
   it "can quote and interpolate dangerous variables even on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
