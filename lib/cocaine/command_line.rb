@@ -74,8 +74,8 @@ module Cocaine
         full_command = command(interpolations)
         log("#{colored("Command")} :: #{full_command}")
         output = execute(full_command)
-      rescue Errno::ENOENT
-        raise Cocaine::CommandNotFoundError
+      rescue Errno::ENOENT => e
+        raise Cocaine::CommandNotFoundError, e.message
       ensure
         @exit_status = $?.exitstatus if $?.respond_to?(:exitstatus)
       end
