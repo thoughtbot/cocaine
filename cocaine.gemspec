@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage          = "http://github.com/thoughtbot/cocaine"
   s.summary           = "A small library for doing (command) lines"
   s.description       = "A small library for doing (command) lines"
+  s.license           = "MIT"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
