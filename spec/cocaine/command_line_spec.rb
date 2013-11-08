@@ -312,5 +312,16 @@ describe Cocaine::CommandLine do
       cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
     end
 
+    it 'passes error message to exception when command is failed with Errono::ENOENT' do
+      cmd = Cocaine::CommandLine.new('test command', '')
+      cmd.stubs(:execute).with('test command') do
+        raise Errno::ENOENT, 'fail message'
+      end
+      begin
+        cmd.run
+      rescue Cocaine::CommandNotFoundError => e
+        expect(e.message).to eq 'No such file or directory - fail message'
+      end
+    end
   end
 end
