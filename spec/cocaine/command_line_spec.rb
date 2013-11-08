@@ -78,15 +78,6 @@ describe Cocaine::CommandLine do
     command.run(:hello_world => "Hello, world").should match(/Hello, world/)
   end
 
-  it "does not blow up if running the command errored before the actual execution" do
-    assuming_no_processes_have_been_run
-    command = Cocaine::CommandLine.new("echo", ":hello_world")
-    command.stubs(:command).raises("An Error")
-
-    lambda{ command.run }.should raise_error("An Error")
-    command.exit_status.should be_nil
-  end
-
   it "quotes command line options differently if we're on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
@@ -156,53 +147,6 @@ describe Cocaine::CommandLine do
     end
   end
 
-  it "raises a CommandLineError if the result code from the command isn't expected" do
-    cmd = Cocaine::CommandLine.new("convert", "a.jpg b.png", :swallow_stderr => false)
-    cmd.stubs(:execute).with("convert a.jpg b.png").returns(:correct_value)
-    with_exitstatus_returning(1) do
-      lambda do
-        cmd.run
-      end.should raise_error(Cocaine::CommandLineError)
-    end
-  end
-
-  it "does not raise if the result code is expected, even if nonzero" do
-    cmd = Cocaine::CommandLine.new("convert",
-                                   "a.jpg b.png",
-                                   :expected_outcodes => [0, 1],
-                                   :swallow_stderr => false)
-    cmd.stubs(:execute).with("convert a.jpg b.png").returns(:correct_value)
-    with_exitstatus_returning(1) do
-      lambda do
-        cmd.run
-      end.should_not raise_error
-    end
-  end
-
-  it "adds command output to exception message if the result code is nonzero" do
-    cmd = Cocaine::CommandLine.new("convert",
-                                   "a.jpg b.png",
-                                   :swallow_stderr => false)
-    error_output = "Error 315"
-    cmd.stubs(:execute).with("convert a.jpg b.png").returns(error_output)
-    with_exitstatus_returning(1) do
-      begin
-        cmd.run
-      rescue Cocaine::ExitStatusError => e
-        e.message.should =~ /#{error_output}/
-      end
-    end
-  end
-
-  it "should keep result code in #exitstatus" do
-    cmd = Cocaine::CommandLine.new("convert")
-    cmd.stubs(:execute).with("convert").returns(:correct_value)
-    with_exitstatus_returning(1) do
-      cmd.run rescue nil
-    end
-    cmd.exit_status.should == 1
-  end
-
   it "detects that the system is unix" do
     Cocaine::CommandLine.new("convert").should be_unix
   end
@@ -248,80 +192,5 @@ describe Cocaine::CommandLine do
     Cocaine::CommandLine.logger = nil
     cmd = Cocaine::CommandLine.new("echo", "'Logging!'", :logger => nil)
     lambda { cmd.run }.should_not raise_error
-  end
-
-  describe "command execution" do
-    it "uses the BackticksRunner by default" do
-      Cocaine::CommandLine::ProcessRunner.stubs(:supported?).returns(false)
-      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(false)
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-
-      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
-    end
-
-    it "uses the ProcessRunner on 1.9 and it's available" do
-      Cocaine::CommandLine::ProcessRunner.stubs(:supported?).returns(true)
-      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(false)
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.runner.class.should == Cocaine::CommandLine::ProcessRunner
-    end
-
-    it "uses the PosixRunner if the PosixRunner is available" do
-      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.runner.class.should == Cocaine::CommandLine::PosixRunner
-    end
-
-    it "uses the BackticksRunner if the PosixRunner is available, but we told it to use Backticks all the time" do
-      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
-      Cocaine::CommandLine.runner = Cocaine::CommandLine::BackticksRunner.new
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
-    end
-
-    it "uses the BackticksRunner if the PosixRunner is available, but we told it to use Backticks" do
-      Cocaine::CommandLine::PosixRunner.stubs(:supported?).returns(true)
-
-      cmd = Cocaine::CommandLine.new("echo", "hello", :runner => Cocaine::CommandLine::BackticksRunner.new)
-      cmd.runner.class.should == Cocaine::CommandLine::BackticksRunner
-    end
-
-    it "can go into 'Fake' mode" do
-      Cocaine::CommandLine.fake!
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
-    end
-
-    it "can turn off Fake mode" do
-      Cocaine::CommandLine.fake!
-      Cocaine::CommandLine.unfake!
-
-      cmd = Cocaine::CommandLine.new("echo", "hello")
-      cmd.runner.class.should_not eq Cocaine::CommandLine::FakeRunner
-    end
-
-    it "can use a FakeRunner even if not in Fake mode" do
-      Cocaine::CommandLine.unfake!
-
-      cmd = Cocaine::CommandLine.new("echo", "hello", :runner => Cocaine::CommandLine::FakeRunner.new)
-      cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
-    end
-
-    it 'passes error message to exception when command is failed with Errono::ENOENT' do
-      cmd = Cocaine::CommandLine.new('test command', '')
-      cmd.stubs(:execute).with('test command') do
-        raise Errno::ENOENT, 'fail message'
-      end
-      begin
-        cmd.run
-      rescue Cocaine::CommandNotFoundError => e
-        expect(e.message).to eq 'No such file or directory - fail message'
-      end
-    end
   end
 end
