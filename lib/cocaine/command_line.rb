@@ -126,7 +126,7 @@ module Cocaine
       pattern.gsub(/:\{?(\w+)\b\}?/) do |match|
         key = match.tr(":{}", "")
         if interpolations.key?(key)
-          Array(interpolations[key]).map { |value| shell_quote(value) }.join(" ")
+          shell_quote_all_values(interpolations[key])
         else
           match
         end
@@ -139,6 +139,12 @@ module Cocaine
         hash[key.to_s] = hash.delete(key)
       end
       hash
+    end
+
+    def shell_quote_all_values(values)
+      Array(values).map do |value|
+        shell_quote(value)
+      end.join(" ")
     end
 
     def shell_quote(string)
