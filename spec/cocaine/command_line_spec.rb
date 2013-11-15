@@ -78,6 +78,11 @@ describe Cocaine::CommandLine do
     command.run(:hello_world => "Hello, world").should match(/Hello, world/)
   end
 
+  it "interpolates any Array arguments when running a command" do
+    command = Cocaine::CommandLine.new("echo", "Hello :worlds and :dwarfs")
+    command.command(:worlds => %w[mercury venus earth], :dwarfs => "pluto").should == "echo Hello 'mercury' 'venus' 'earth' and 'pluto'"
+  end
+
   it "quotes command line options differently if we're on windows" do
     on_windows!
     cmd = Cocaine::CommandLine.new("convert",
