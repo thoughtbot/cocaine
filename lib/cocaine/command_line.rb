@@ -80,7 +80,7 @@ module Cocaine
       rescue Errno::ENOENT => e
         raise Cocaine::CommandNotFoundError, e.message
       ensure
-        @exit_status = $?.exitstatus if $?.respond_to?(:exitstatus)
+        @exit_status = $?.respond_to?(:exitstatus) ? $?.exitstatus : 0
       end
 
       if @exit_status == 127
