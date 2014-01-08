@@ -65,9 +65,7 @@ module Cocaine
     end
 
     def command(interpolations = {})
-      cmd = []
-      cmd << @binary
-      cmd << interpolate(@params, interpolations)
+      cmd = [@binary, interpolate(@params, interpolations)]
       cmd << bit_bucket if @swallow_stderr
       cmd.join(" ").strip
     end
@@ -84,9 +82,11 @@ module Cocaine
       ensure
         @exit_status = $?.exitstatus if $?.respond_to?(:exitstatus)
       end
+
       if @exit_status == 127
         raise Cocaine::CommandNotFoundError
       end
+
       unless @expected_outcodes.include?(@exit_status)
         message = [
           "Command '#{full_command}' returned #{@exit_status}. Expected #{@expected_outcodes.join(", ")}",
@@ -143,17 +143,11 @@ module Cocaine
     end
 
     def stringify_keys(hash)
-      hash = hash.dup
-      hash.keys.each do |key|
-        hash[key.to_s] = hash.delete(key)
-      end
-      hash
+      Hash[hash.map{ |k, v| [k.to_s, v] }]
     end
 
     def shell_quote_all_values(values)
-      Array(values).map do |value|
-        shell_quote(value)
-      end.join(" ")
+      Array(values).map(&method(:shell_quote)).join(" ")
     end
 
     def shell_quote(string)

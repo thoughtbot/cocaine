@@ -4,12 +4,10 @@ module Cocaine
   class CommandLine
     class PosixRunner
       def self.available?
-        begin
-          require 'posix/spawn'
-          true
-        rescue LoadError
-          false
-        end
+        require 'posix/spawn'
+        true
+      rescue LoadError
+        false
       end
 
       def self.supported?
