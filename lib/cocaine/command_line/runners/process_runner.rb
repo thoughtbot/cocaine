@@ -33,11 +33,9 @@ module Cocaine
       end
 
       def waitpid(pid)
-        begin
-          Process.waitpid(pid)
-        rescue Errno::ECHILD
-          # In JRuby, waiting on a finished pid raises.
-        end
+        Process.waitpid(pid)
+      rescue Errno::ECHILD
+        # In JRuby, waiting on a finished pid raises.
       end
 
     end
