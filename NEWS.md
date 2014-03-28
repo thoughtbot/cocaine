@@ -1,3 +1,7 @@
+New for 0.5.4:
+
+* Bug Fix: PosixRunner and ProcessRunner respect supplemental paths now.
+
 New for 0.5.3:
 
 * SECURITY: Fix exploitable bug that could allow arbitrary command execution.
