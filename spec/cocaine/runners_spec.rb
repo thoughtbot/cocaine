@@ -62,3 +62,33 @@ describe "When picking a Runner" do
     cmd.runner.class.should eq Cocaine::CommandLine::FakeRunner
   end
 end
+
+describe 'When running an executable in the supplemental path' do
+  before do
+    path = Pathname.new(File.dirname(__FILE__)) + '..' + 'support'
+    File.open(path + 'ls', 'w'){|f| f.puts "#!/bin/sh\necho overridden-ls\n" }
+    FileUtils.chmod(0755, path + 'ls')
+    Cocaine::CommandLine.path = path
+  end
+
+  after do
+    FileUtils.rm_f(Cocaine::CommandLine.path + 'ls')
+  end
+
+  [
+    Cocaine::CommandLine::BackticksRunner,
+    Cocaine::CommandLine::PopenRunner,
+    Cocaine::CommandLine::PosixRunner,
+    Cocaine::CommandLine::ProcessRunner
+  ].each do |runner_class|
+    describe runner_class do
+      describe '#run' do
+        it 'finds the correct executable' do
+          Cocaine::CommandLine.runner = runner_class.new
+          result = Cocaine::CommandLine.new('ls').run
+          expect(result.strip).to eq('overridden-ls')
+        end
+      end
+    end
+  end
+end

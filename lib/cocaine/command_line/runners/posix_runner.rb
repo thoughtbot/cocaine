@@ -21,15 +21,17 @@ module Cocaine
       def call(command, env = {}, options = {})
         input, output = IO.pipe
         options[:out] = output
-        pid = spawn(env, command, options)
-        output.close
-        result = ""
-        while partial_result = input.read(8192)
-          result << partial_result
+        with_modified_environment(env) do
+          pid = spawn(env, command, options)
+          output.close
+          result = ""
+          while partial_result = input.read(8192)
+            result << partial_result
+          end
+          waitpid(pid)
+          input.close
+          result
         end
-        waitpid(pid)
-        input.close
-        result
       end
 
       private
@@ -40,6 +42,10 @@ module Cocaine
 
       def waitpid(pid)
         Process.waitpid(pid)
+      end
+
+      def with_modified_environment(env, &block)
+        ClimateControl.modify(env, &block)
       end
 
     end
