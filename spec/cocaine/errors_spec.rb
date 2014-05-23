@@ -64,6 +64,6 @@ describe "When an error happens" do
     command.stubs(:command).raises("An Error")
 
     lambda{ command.run }.should raise_error("An Error")
-    command.exit_status.should be_nil
+    command.exit_status.should eq 0
   end
 end
