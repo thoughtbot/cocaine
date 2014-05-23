@@ -13,13 +13,21 @@ module Cocaine
 
       def call(command, env = {}, options = {})
         with_modified_environment(env) do
-          IO.popen(command, "r", options) do |pipe|
+          IO.popen(env_command(command), "r", options) do |pipe|
             pipe.read
           end
         end
       end
 
       private
+
+      def env_command(command)
+        if Cocaine::CommandLine.java?
+          "env #{command}"
+        else
+          command
+        end
+      end
 
       def with_modified_environment(env, &block)
         ClimateControl.modify(env, &block)
