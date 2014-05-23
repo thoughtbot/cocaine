@@ -5,8 +5,10 @@ require 'cocaine'
 require 'timeout'
 require 'tempfile'
 require 'pry'
-require 'active_support/buffered_logger'
 require 'thread'
+
+begin; require 'active_support/logger'; rescue LoadError; end
+begin; require 'active_support/buffered_logger'; rescue LoadError; end
 
 Dir[File.dirname(__FILE__) + "/support/**.rb"].each{|support_file| require support_file }
 
