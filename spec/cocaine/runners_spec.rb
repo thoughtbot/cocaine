@@ -81,12 +81,14 @@ describe 'When running an executable in the supplemental path' do
     Cocaine::CommandLine::PosixRunner,
     Cocaine::CommandLine::ProcessRunner
   ].each do |runner_class|
-    describe runner_class do
-      describe '#run' do
-        it 'finds the correct executable' do
-          Cocaine::CommandLine.runner = runner_class.new
-          result = Cocaine::CommandLine.new('ls').run
-          expect(result.strip).to eq('overridden-ls')
+    if runner_class.supported?
+      describe runner_class do
+        describe '#run' do
+          it 'finds the correct executable' do
+            Cocaine::CommandLine.runner = runner_class.new
+            result = Cocaine::CommandLine.new('ls').run
+            expect(result.strip).to eq('overridden-ls')
+          end
         end
       end
     end
