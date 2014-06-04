@@ -19,13 +19,12 @@ module Cocaine
 
       def call(command, env = {}, options = {})
         commands << [command, env]
-        ""
+        Output.new("")
       end
 
       def ran?(predicate_command)
-        @commands.any?{|(command, env)| command =~ Regexp.new(predicate_command) }
+        @commands.any?{|(command, _)| command =~ Regexp.new(predicate_command) }
       end
-
     end
   end
 end

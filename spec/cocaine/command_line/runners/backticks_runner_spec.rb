@@ -4,12 +4,14 @@ describe Cocaine::CommandLine::BackticksRunner do
   if Cocaine::CommandLine::BackticksRunner.supported?
     it_behaves_like 'a command that does not block'
 
-    it 'runs the command given' do
-      subject.call("echo hello").should == "hello\n"
+    it 'runs the command given and captures the output in an Output' do
+      output = subject.call("echo hello")
+      expect(output).to have_output "hello\n"
     end
 
     it 'modifies the environment and runs the command given' do
-      subject.call("echo $yes", {"yes" => "no"}).should == "no\n"
+      output = subject.call("echo $yes", {"yes" => "no"})
+      expect(output).to have_output "no\n"
     end
 
     it 'sets the exitstatus when a command completes' do
