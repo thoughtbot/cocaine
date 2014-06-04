@@ -18,17 +18,12 @@ module Cocaine
       end
 
       def call(command, env = {}, options = {})
-        input, output = IO.pipe
-        options[:out] = output
-        pid = spawn(env, command, options)
-        output.close
-        result = ""
-        while partial_result = input.read(8192)
-          result << partial_result
+        pipe = MultiPipe.new
+        pid = spawn(env, command, options.merge(pipe.pipe_options))
+        pipe.read_and_then do
+          waitpid(pid)
         end
-        waitpid(pid)
-        input.close
-        result
+        pipe.output
       end
 
       private

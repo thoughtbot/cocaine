@@ -14,7 +14,7 @@ module Cocaine
       def call(command, env = {}, options = {})
         with_modified_environment(env) do
           IO.popen(command, "r", options) do |pipe|
-            pipe.read
+            Output.new(pipe.read)
           end
         end
       end
