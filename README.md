@@ -10,8 +10,8 @@ The basic, normal stuff:
 
 ```ruby
 line = Cocaine::CommandLine.new("echo", "hello 'world'")
-line.command # => "echo hello 'world'" 
-line.run # => "hello world\n" 
+line.command # => "echo hello 'world'"
+line.run # => "hello world\n"
 ```
 
 Interpolated arguments:
