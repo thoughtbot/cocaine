@@ -1,4 +1,4 @@
-# Cocaine [![Build Status](https://secure.travis-ci.org/thoughtbot/cocaine.png)](http://travis-ci.org/thoughtbot/cocaine)
+# Cocaine [![Build Status](https://secure.travis-ci.org/thoughtbot/cocaine.png?branch=master)](http://travis-ci.org/thoughtbot/cocaine)
 
 A small library for doing (command) lines.
 
@@ -10,8 +10,8 @@ The basic, normal stuff:
 
 ```ruby
 line = Cocaine::CommandLine.new("echo", "hello 'world'")
-line.command # => "echo hello 'world'" 
-line.run # => "hello world\n" 
+line.command # => "echo hello 'world'"
+line.run # => "hello world\n"
 ```
 
 Interpolated arguments:
