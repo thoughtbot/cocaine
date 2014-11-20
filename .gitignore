@@ -6,3 +6,5 @@ Gemfile.lock
 *.swo
 .bundle
 bin
+.idea/
+.ruby-version
