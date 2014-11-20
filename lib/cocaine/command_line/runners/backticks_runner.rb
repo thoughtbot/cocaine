@@ -15,7 +15,7 @@ module Cocaine
 
       def call(command, env = {}, options = {})
         with_modified_environment(env) do
-          `#{command}`
+          `#{encoded_command(command)}`
         end
       end
 
@@ -23,6 +23,14 @@ module Cocaine
 
       def with_modified_environment(env, &block)
         ClimateControl.modify(env, &block)
+      end
+
+      def encoded_command(command)
+        if Cocaine::CommandLine.java?
+          command.encode('ASCII-8BIT')
+        else
+          command
+        end
       end
 
     end

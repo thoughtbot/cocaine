@@ -12,9 +12,9 @@ Gem::Specification.new do |s|
   s.description       = "A small library for doing (command) lines"
   s.license           = "MIT"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files         = `git ls-files -z`.split("\0")
+  s.test_files    = `git ls-files -z -- {test,spec,features}/*`.split("\0")
+  s.executables   = `git ls-files -z -- bin/*`.split("\0").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.add_dependency('climate_control', '>= 0.0.3', '< 1.0')

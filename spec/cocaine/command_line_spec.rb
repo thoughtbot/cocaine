@@ -1,3 +1,4 @@
+#encoding: utf-8
 require 'spec_helper'
 
 describe Cocaine::CommandLine do
@@ -164,6 +165,12 @@ describe Cocaine::CommandLine do
   it "detects that the system is windows (mingw)" do
     on_mingw!
     Cocaine::CommandLine.new("convert").should_not be_unix
+  end
+
+  it "encodes command on jruby" do
+    dir_path = File.expand_path('../../support/files', __FILE__)
+    mime_type = Cocaine::CommandLine.new("file", "-b --mime :file").run(:file => File.join(dir_path, 'Neliö'))
+    mime_type.should match('text/plain')
   end
 
   it "colorizes the output to a tty" do
