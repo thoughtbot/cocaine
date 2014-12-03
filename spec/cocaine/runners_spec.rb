@@ -72,7 +72,7 @@ describe 'When running an executable in the supplemental path' do
   end
 
   after do
-    FileUtils.rm_f(Cocaine::CommandLine.path + 'ls')
+    FileUtils.rm_f("#{Cocaine::CommandLine.path}/ls")
   end
 
   [

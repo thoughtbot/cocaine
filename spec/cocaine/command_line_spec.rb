@@ -11,18 +11,17 @@ describe Cocaine::CommandLine do
     cmd.command.should == "convert a.jpg b.png"
   end
 
-  it "specifies the $PATH where the command can be found" do
-    saved_path = ENV['PATH']
-    begin
-      ENV['PATH'] = "/the/environment/path:/other/bin"
-      Cocaine::CommandLine.path = "/path/to/command/dir"
-      cmd = Cocaine::CommandLine.new("echo", "$PATH")
-      cmd.command.should == "echo $PATH"
-      output = cmd.run
-      output.should match(%r{/path/to/command/dir:/the/environment/path:/other/bin})
-    ensure
-      ENV['PATH'] = saved_path
-    end
+  it "specifies the $PATH where the command can be found on unix" do
+    Cocaine::CommandLine.path = ["/path/to/command/dir", "/"]
+    cmd = Cocaine::CommandLine.new("ls")
+    cmd.command.should == "PATH=/path/to/command/dir:/:$PATH ls"
+  end
+
+  it "specifies the %PATH% where the command can be found on windows" do
+    on_windows!
+    Cocaine::CommandLine.path = ['C:\system32', 'D:\\']
+    cmd = Cocaine::CommandLine.new("dir")
+    cmd.command.should == 'SET PATH=C:\system32;D:\;%PATH% & dir'
   end
 
   it "specifies more than one path where the command can be found" do
@@ -150,20 +149,6 @@ describe Cocaine::CommandLine do
     with_exitstatus_returning(0) do
       cmd.run.should == :correct_value
     end
-  end
-
-  it "detects that the system is unix" do
-    Cocaine::CommandLine.new("convert").should be_unix
-  end
-
-  it "detects that the system is windows" do
-    on_windows!
-    Cocaine::CommandLine.new("convert").should_not be_unix
-  end
-
-  it "detects that the system is windows (mingw)" do
-    on_mingw!
-    Cocaine::CommandLine.new("convert").should_not be_unix
   end
 
   it "colorizes the output to a tty" do

@@ -10,9 +10,9 @@ module Cocaine
       end
 
       def path=(supplemental_path)
-        @supplemental_path = supplemental_path
-        @supplemental_environment ||= {}
-        @supplemental_environment['PATH'] = (Array(supplemental_path) + [ENV['PATH']]).join(File::PATH_SEPARATOR)
+        @supplemental_path = Array(supplemental_path).
+          flatten.
+          join(OS.path_separator)
       end
 
       def environment
@@ -33,10 +33,6 @@ module Cocaine
 
       def unfake!
         @runner = nil
-      end
-
-      def java?
-        RUBY_PLATFORM =~ /java/
       end
 
       private
@@ -65,7 +61,7 @@ module Cocaine
     end
 
     def command(interpolations = {})
-      cmd = [@binary, interpolate(@params, interpolations)]
+      cmd = [path_prefix, @binary, interpolate(@params, interpolations)]
       cmd << bit_bucket if @swallow_stderr
       cmd.join(" ").strip
     end
@@ -98,10 +94,6 @@ module Cocaine
       output
     end
 
-    def unix?
-      RbConfig::CONFIG['host_os'] !~ /mswin|mingw/
-    end
-
     private
 
     def colored(text, ansi_color = "\e[32m")
@@ -116,6 +108,28 @@ module Cocaine
       if @logger
         @logger.info(text)
       end
+    end
+
+    def path_prefix
+      if !self.class.path.nil? && !self.class.path.empty?
+        os_path_prefix
+      end
+    end
+
+    def os_path_prefix
+      if OS.unix?
+        unix_path_prefix
+      else
+        windows_path_prefix
+      end
+    end
+
+    def unix_path_prefix
+      "PATH=#{self.class.path}#{OS.path_separator}$PATH"
+    end
+
+    def windows_path_prefix
+      "SET PATH=#{self.class.path}#{OS.path_separator}%PATH% &"
     end
 
     def execute(command)
@@ -152,7 +166,7 @@ module Cocaine
 
     def shell_quote(string)
       return "" if string.nil?
-      if unix?
+      if OS.unix?
         if string.empty?
           "''"
         else
@@ -164,7 +178,7 @@ module Cocaine
     end
 
     def bit_bucket
-      unix? ? "2>/dev/null" : "2>NUL"
+      OS.unix? ? "2>/dev/null" : "2>NUL"
     end
   end
 end

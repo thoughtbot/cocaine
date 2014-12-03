@@ -11,7 +11,7 @@ module Cocaine
       end
 
       def self.supported?
-        available? && !Cocaine::CommandLine.java?
+        available? && !OS.java?
       end
 
       def supported?
@@ -21,17 +21,15 @@ module Cocaine
       def call(command, env = {}, options = {})
         input, output = IO.pipe
         options[:out] = output
-        with_modified_environment(env) do
-          pid = spawn(env, command, options)
-          output.close
-          result = ""
-          while partial_result = input.read(8192)
-            result << partial_result
-          end
-          waitpid(pid)
-          input.close
-          result
+        pid = spawn(env, command, options)
+        output.close
+        result = ""
+        while partial_result = input.read(8192)
+          result << partial_result
         end
+        waitpid(pid)
+        input.close
+        result
       end
 
       private
@@ -42,10 +40,6 @@ module Cocaine
 
       def waitpid(pid)
         Process.waitpid(pid)
-      end
-
-      def with_modified_environment(env, &block)
-        ClimateControl.modify(env, &block)
       end
 
     end

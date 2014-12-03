@@ -180,6 +180,13 @@ try to use `PopenRunner`:
 Cocaine::CommandLine.runner = Cocaine::CommandLine::PopenRunner.new
 ```
 
+## Thread Safety
+
+Cocaine should be thread safe. As discussed [here, in this climate_control
+thread](https://github.com/thoughtbot/climate_control/pull/11), climate_control,
+which modifies the environment under which commands are run for the
+BackticksRunner and PopenRunner, is thread-safe but not reentrant. Please let us
+know if you find this is ever not the case.
 
 ## REE
 

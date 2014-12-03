@@ -22,11 +22,23 @@ module Cocaine
       private
 
       def env_command(command)
-        if Cocaine::CommandLine.java?
-          "env #{command}"
-        else
+        windows_command(command) || java_command(command) || default_command(command)
+      end
+
+      def windows_command(command)
+        if OS.windows?
           command
         end
+      end
+
+      def java_command(command)
+        if OS.java?
+          "env #{command}"
+        end
+      end
+
+      def default_command(command)
+        command
       end
 
       def with_modified_environment(env, &block)
