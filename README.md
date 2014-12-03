@@ -188,19 +188,6 @@ which modifies the environment under which commands are run for the
 BackticksRunner and PopenRunner, is thread-safe but not reentrant. Please let us
 know if you find this is ever not the case.
 
-## REE
-
-So, here's the thing about REE: The specs that involve timeouts don't work
-there. Not because the logic is unsound, but because the command runs really
-slowly. The test passes -- eventually. This was verified using an external
-debugger: the process that REE kicks off in the tests reads and writes
-surprisingly slowly. For this reason, we cannot recommend using Cocaine with
-REE anymore.
-
-It's not something we like, so if anyone has any insight into this problem,
-we'd love to hear about it. But, for the time being, we'll consider it more
-appropriate to just not use it anymore. Upgrade to 1.9.3, people.
-
 ## Feedback
 
 *Security* concerns must be privately emailed to
