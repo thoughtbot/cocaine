@@ -25,5 +25,16 @@ describe Cocaine::CommandLine::PosixRunner do
       subject.call("ruby -e 'exit 5'")
       $?.exitstatus.should == 5
     end
+
+    it "runs the command it's given and allows access to stderr afterwards" do
+      cmd = Cocaine::CommandLine.new(
+        "ruby",
+        "-e '$stdout.puts %{hello}; $stderr.puts %{goodbye}'",
+        :swallow_stderr => false
+      )
+      cmd.run
+      expect(cmd.command_output).to eq "hello\n"
+      expect(cmd.command_error_output).to eq "goodbye\n"
+    end
   end
 end

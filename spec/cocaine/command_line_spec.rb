@@ -154,17 +154,6 @@ describe Cocaine::CommandLine do
     expect(cmd.command_output).to eq "hello\n"
   end
 
-  it "runs the command it's given and allows access to stderr afterwards" do
-    cmd = Cocaine::CommandLine.new(
-      "ruby",
-      "-e '$stdout.puts %{hello}; $stderr.puts %{goodbye}'",
-      :swallow_stderr => false
-    )
-    cmd.run
-    expect(cmd.command_output).to eq "hello\n"
-    expect(cmd.command_error_output).to eq "goodbye\n"
-  end
-
   it "colorizes the output to a tty" do
     logger = FakeLogger.new(:tty => true)
     Cocaine::CommandLine.new("echo", "'Logging!' :foo", :logger => logger).run(:foo => "bar")
