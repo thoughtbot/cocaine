@@ -1,3 +1,11 @@
+New for 0.5.5:
+
+* Bug Fix: Posix- and ProcessRunner respect paths *and* are thread safe!
+* Bug Fix: `exitstatus` should always be set, even if command doesn't run.
+* Test Fix: Do not try to test Runners if they don't run on this system.
+* Improvement: Pass the Errno::ENOENT message through to the exception.
+* Improvement: Improve documentation
+
 New for 0.5.4:
 
 * Bug Fix: PosixRunner and ProcessRunner respect supplemental paths now.
