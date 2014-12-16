@@ -18,9 +18,9 @@ Interpolated arguments:
 
 ```ruby
 line = Cocaine::CommandLine.new("convert", ":in -scale :resolution :out")
-line.command(:in => "omg.jpg",
-             :resolution => "32x32",
-             :out => "omg_thumb.jpg")
+line.command(in: "omg.jpg",
+             resolution: "32x32",
+             out: "omg_thumb.jpg")
 # => "convert 'omg.jpg' -scale '32x32' 'omg_thumb.jpg'"
 ```
 
@@ -28,10 +28,10 @@ It prevents attempts at being bad:
 
 ```ruby
 line = Cocaine::CommandLine.new("cat", ":file")
-line.command(:file => "haha`rm -rf /`.txt") # => "cat 'haha`rm -rf /`.txt'"
+line.command(file: "haha`rm -rf /`.txt") # => "cat 'haha`rm -rf /`.txt'"
 
 line = Cocaine::CommandLine.new("cat", ":file")
-line.command(:file => "ohyeah?'`rm -rf /`.ha!") # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
+line.command(file: "ohyeah?'`rm -rf /`.ha!") # => "cat 'ohyeah?'\\''`rm -rf /`.ha!'"
 ```
 
 NOTE: It only does that for arguments interpolated via `run`, NOT arguments
@@ -46,7 +46,7 @@ line.run # => "hahawebserver"
 You can ignore the result:
 
 ```ruby
-line = Cocaine::CommandLine.new("noisy", "--extra-verbose", :swallow_stderr => true)
+line = Cocaine::CommandLine.new("noisy", "--extra-verbose", swallow_stderr: true)
 line.command # => "noisy --extra-verbose 2>/dev/null"
 
 # ... and on Windows...
@@ -67,7 +67,7 @@ end
 If your command might return something non-zero, and you expect that, it's cool:
 
 ```ruby
-line = Cocaine::CommandLine.new("/usr/bin/false", "", :expected_outcodes => [0, 1])
+line = Cocaine::CommandLine.new("/usr/bin/false", "", expected_outcodes: [0, 1])
 begin
   line.run
 rescue Cocaine::ExitStatusError => e
@@ -114,8 +114,8 @@ line.command # => "/opt/bin/lolwut"
 You can see what's getting run. The 'Command' part it logs is in green for visibility!
 
 ```ruby
-line = Cocaine::CommandLine.new("echo", ":var", :logger => Logger.new(STDOUT))
-line.run(:var => "LOL!") # => Logs this with #info -> Command :: echo 'LOL!'
+line = Cocaine::CommandLine.new("echo", ":var", logger: Logger.new(STDOUT))
+line.run(var: "LOL!") # => Logs this with #info -> Command :: echo 'LOL!'
 ```
 
 Or log every command:
