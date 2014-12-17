@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.platform          = Gem::Platform::RUBY
   s.author            = "Jon Yurek"
   s.email             = "jyurek@thoughtbot.com"
-  s.homepage          = "http://github.com/thoughtbot/cocaine"
+  s.homepage          = "https://github.com/thoughtbot/cocaine"
   s.summary           = "A small library for doing (command) lines"
   s.description       = "A small library for doing (command) lines"
   s.license           = "MIT"
