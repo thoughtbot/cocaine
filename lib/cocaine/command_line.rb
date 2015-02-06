@@ -125,7 +125,7 @@ module Cocaine
     end
 
     def unix_path_prefix
-      "PATH=#{self.class.path}#{OS.path_separator}$PATH"
+      "PATH=#{self.class.path}#{OS.path_separator}$PATH;"
     end
 
     def windows_path_prefix

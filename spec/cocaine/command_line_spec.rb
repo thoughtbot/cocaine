@@ -14,7 +14,7 @@ describe Cocaine::CommandLine do
   it "specifies the $PATH where the command can be found on unix" do
     Cocaine::CommandLine.path = ["/path/to/command/dir", "/"]
     cmd = Cocaine::CommandLine.new("ls")
-    cmd.command.should == "PATH=/path/to/command/dir:/:$PATH ls"
+    cmd.command.should == "PATH=/path/to/command/dir:/:$PATH; ls"
   end
 
   it "specifies the %PATH% where the command can be found on windows" do
