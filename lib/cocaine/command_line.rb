@@ -166,6 +166,11 @@ module Cocaine
 
     def shell_quote(string)
       return "" if string.nil?
+      if string.respond_to? :to_s
+        string = string.to_s
+      else
+        raise ArgumentError, "Must be a String or have the ability to convert to a String."
+      end
       if OS.unix?
         if string.empty?
           "''"
