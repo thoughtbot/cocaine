@@ -4,10 +4,9 @@ module Cocaine
   class CommandLine
     class PosixRunner
       def self.available?
-        require 'posix/spawn'
-        true
-      rescue LoadError
-        false
+        return @available unless @available.nil?
+
+        @available = posix_spawn_gem_available?
       end
 
       def self.supported?
@@ -42,6 +41,14 @@ module Cocaine
         Process.waitpid(pid)
       end
 
+      def self.posix_spawn_gem_available?
+        require 'posix/spawn'
+        true
+      rescue
+        false
+      end
+
+      private_class_method :posix_spawn_gem_available?
     end
   end
 end
