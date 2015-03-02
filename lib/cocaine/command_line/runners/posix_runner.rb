@@ -44,7 +44,7 @@ module Cocaine
       def self.posix_spawn_gem_available?
         require 'posix/spawn'
         true
-      rescue
+      rescue LoadError
         false
       end
 
