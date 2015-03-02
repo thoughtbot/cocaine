@@ -86,7 +86,8 @@ describe 'When running an executable in the supplemental path' do
         describe '#run' do
           it 'finds the correct executable' do
             Cocaine::CommandLine.runner = runner_class.new
-            result = Cocaine::CommandLine.new('ls').run
+            command = Cocaine::CommandLine.new('ls')
+            result = command.run
             expect(result.strip).to eq('overridden-ls')
           end
         end
