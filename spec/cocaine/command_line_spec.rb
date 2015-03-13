@@ -126,6 +126,12 @@ describe Cocaine::CommandLine do
     cmd.command.should == "convert 'a.jpg' xc:black 'b.jpg'"
   end
 
+  it 'handles symbols in user supplied values' do
+    cmd = Cocaine::CommandLine.new("echo", ":foo")
+    command_string = cmd.command(:foo => :bar)
+    command_string.should == "echo 'bar'"
+  end
+
   it "can redirect stderr to the bit bucket if requested" do
     cmd = Cocaine::CommandLine.new("convert",
                                    "a.jpg b.png",
