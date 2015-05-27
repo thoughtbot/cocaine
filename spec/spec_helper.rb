@@ -6,6 +6,7 @@ require 'timeout'
 require 'tempfile'
 require 'pry'
 require 'thread'
+require 'pathname'
 
 begin; require 'active_support/logger'; rescue LoadError; end
 begin; require 'active_support/buffered_logger'; rescue LoadError; end
