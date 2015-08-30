@@ -166,9 +166,8 @@ module Cocaine
 
     def shell_quote(string)
       return "" if string.nil?
-      if string.respond_to? :to_s
-        string = string.to_s
-      end
+      string = string.to_s if string.respond_to? :to_s
+
       if OS.unix?
         if string.empty?
           "''"
