@@ -95,8 +95,8 @@ describe Cocaine::CommandLine do
     cmd = Cocaine::CommandLine.new("convert",
                                    ":one :two",
                                    :swallow_stderr => false)
-    command_string = cmd.command(:one => "`rm -rf`.jpg", :two => "ha'ha.png")
-    command_string.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'"
+    command_string = cmd.command(:one => "`rm -rf`.jpg", :two => "ha'ha.png'")
+    command_string.should == "convert '`rm -rf`.jpg' 'ha'\\''ha.png'\\'''"
   end
 
   it 'cannot recursively introduce a place where user-supplied commands can run' do

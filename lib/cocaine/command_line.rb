@@ -183,7 +183,7 @@ module Cocaine
         if string.empty?
           "''"
         else
-          string.split("'").map{|m| "'#{m}'" }.join("\\'")
+          string.split("'", -1).map{|m| "'#{m}'" }.join("\\'")
         end
       else
         %{"#{string}"}
