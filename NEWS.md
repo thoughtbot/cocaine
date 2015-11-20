@@ -1,3 +1,13 @@
+New for 0.5.7:
+
+* Feature: Allow collection of both STDOUT and STDERR.
+* Improvement: Convert arguments to strings when possible
+
+New for 0.5.6:
+
+* Bug Fix: Java does not need to run commands with `env`
+* Bug Fix: Found out we were rescuing the wrong error
+
 New for 0.5.5:
 
 * Bug Fix: Posix- and ProcessRunner respect paths *and* are thread safe!
