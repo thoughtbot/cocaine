@@ -32,6 +32,22 @@ describe "When an error happens" do
     end
   end
 
+  it "adds command output to exception message if the result code is not in " \
+     "range of expected outcodes" do
+    cmd = Cocaine::CommandLine.new("echo", "hello", expected_outcodes: (0..1))
+    error_output = "Error 315"
+    cmd.
+      stubs(:execute).
+      returns(Cocaine::CommandLine::Output.new("", error_output))
+    with_exitstatus_returning(2) do
+      begin
+        cmd.run
+      rescue Cocaine::ExitStatusError => e
+        expect(e.message).to match /STDERR:\s+#{error_output}/
+      end
+    end
+  end
+
   it 'passes the error message to the exception when command is not found' do
     cmd = Cocaine::CommandLine.new('test', '')
     cmd.stubs(:execute).raises(Errno::ENOENT.new("not found"))
