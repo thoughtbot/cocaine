@@ -32,7 +32,8 @@ describe "When an error happens" do
     end
   end
 
-  it "adds command output to exception message if the result code is not in range" do
+  it "adds command output to exception message if the result code is not in " \
+     "range of expected outcodes" do
     cmd = Cocaine::CommandLine.new("echo", "hello", expected_outcodes: (0..1))
     error_output = "Error 315"
     cmd.
