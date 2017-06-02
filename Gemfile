@@ -4,4 +4,5 @@ gemspec
 
 platforms :ruby do
   gem "posix-spawn"
+  gem "byebug"
 end

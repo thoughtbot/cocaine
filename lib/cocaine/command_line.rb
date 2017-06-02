@@ -63,7 +63,11 @@ module Cocaine
     def command(interpolations = {})
       cmd = [path_prefix, @binary, interpolate(@params, interpolations)]
       cmd << bit_bucket if @swallow_stderr
-      cmd.join(" ").strip
+      if @runner.is_a?(Cocaine::CommandLine::SubprocessRunner)
+        cmd
+      else
+        cmd.join(" ").strip
+      end
     end
 
     def run(interpolations = {})
