@@ -33,16 +33,25 @@ module Cocaine
       end
 
       def close_read
-        @stdout_in.close rescue IOError
-        @stderr_in.close rescue IOError
+        begin
+          @stdout_in.close
+        rescue IOError
+          # do nothing
+        end
+
+        begin
+        @stderr_in.close
+        rescue IOError
+          # do nothing
+        end
       end
 
       def read_streams(output, error)
         @stdout_output = ""
         @stderr_output = ""
-        read_fds = [output,error]
-        while read_fds.size > 0
-          to_read, _ = IO.select(read_fds)
+        read_fds = [output, error]
+        while !read_fds.empty?
+          to_read, = IO.select(read_fds)
           if to_read.include?(output)
             @stdout_output << read_stream(output)
             read_fds.delete(output) if output.closed?
@@ -53,7 +62,6 @@ module Cocaine
             read_fds.delete(error) if error.closed?
           end
         end
-
       end
 
       def read_stream(io)
@@ -65,7 +73,7 @@ module Cocaine
         rescue EOFError, Errno::EPIPE
           io.close
         rescue Errno::EINTR, Errno::EWOULDBLOCK, Errno::EAGAIN
-          #do nothing
+          # do nothing
         end
         result
       end
