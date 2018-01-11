@@ -1,12 +1,12 @@
 # coding: UTF-8
 
-require 'rbconfig'
-require 'cocaine/os_detector'
-require 'cocaine/command_line'
-require 'cocaine/command_line/output'
-require 'cocaine/command_line/multi_pipe'
-require 'cocaine/command_line/runners'
-require 'cocaine/exceptions'
+require 'terrapin'
+Cocaine = Terrapin
 
-module Cocaine
-end
+$stderr.puts [
+  "===========================================\n",
+  "DEPRECATION: The cocaine gem is deprecated.",
+  "Please upgrade to terrapin.",
+  "See https://github.com/thoughtbot/terrapin/ for further instructions.",
+  "\n==========================================="
+].join(" ")
