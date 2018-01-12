@@ -1,3 +1,13 @@
+New for 0.6.0:
+
+* Rename the project to Terrapin
+
+New for 0.5.8:
+
+* Improvement: Ensure that argument interpolations can be turned into Strings
+* Feature: Save STDOUT and STDERR for inspection when the command completes
+* Bug fix: Properly interpolate at the end of the line
+
 New for 0.5.7:
 
 * Feature: Allow collection of both STDOUT and STDERR.
