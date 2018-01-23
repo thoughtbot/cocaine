@@ -1,7 +1,6 @@
 # Cocaine has been renamed to Terrapin
 
-Please track further development on (the Terrapin project
-page)[http://github.com/thoughtbot/terrapin].
+Please track further development on [the Terrapin project page](http://github.com/thoughtbot/terrapin).
 
 The final version of this gem simply requires Terrapin. It should not function any
 differently from previous versions.
