@@ -12,12 +12,12 @@ Gem::Specification.new do |s|
   s.description       = 'A small library for doing (command) lines'
   s.license           = 'MIT'
 
-  s.files         = `git ls-files`.split('\n')
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
-  s.executables   = `git ls-files -- bin/*`.split('\n').map{ |f| File.basename(f) }
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency('terrapin', '= 0.6.0.alpha')
+  s.add_dependency('terrapin', '= 0.6.0')
   s.add_development_dependency('rspec')
   s.add_development_dependency('bourne')
   s.add_development_dependency('mocha')
